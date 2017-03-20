@@ -1,40 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace YinYang
 {
 	public sealed class Server
 	{
-		private HttpListener listener = new HttpListener();
-		private Dictionary<HttpRoute, RequestHandler> routing = new Dictionary<HttpRoute, RequestHandler>();
+		private HttpListener _listener = new HttpListener();
+		private Dictionary<HttpRoute, RequestHandler> _routing = new Dictionary<HttpRoute, RequestHandler>();
+		public int MaxConcurrentRequests { get; set; } = 10;
+		public string BaseUrl { get; }
 
-		public Server()
+		public Server(string baseUrl)
 		{
-		}
-
-		public void Start()
-		{
-			listener.Start();
-			listener.GetContextAsync().ContinueWith(DispatchRequest);
-			listener.Realm = "http://localhost/realm";
-			listener.Prefixes.Add("http://localhost/test/");
-		}
-
-		public void Run()
-		{
-			while(listener.IsListening)
+			if (!HttpListener.IsSupported)
 			{
-				var contextTask = listener.GetContextAsync();
-				contextTask.ContinueWith(DispatchRequest);
+				throw new NotSupportedException("HttpListener is not supported");
 			}
-		}
-
-		public void Stop()
-		{
-			listener.Stop();
+			BaseUrl = baseUrl;
 		}
 
 		public void AddRoute(HttpRoute route, RequestHandler handler)
@@ -42,23 +27,71 @@ namespace YinYang
 			if (route == null) throw new ArgumentNullException(nameof(route));
 			if (handler == null) throw new ArgumentNullException(nameof(route));
 
-			routing.Add(route, handler);
+			_routing.Add(route, handler);
 		}
 
-		private void DispatchRequest(Task<HttpListenerContext> requestTask)
+		public void Start()
 		{
-			var context = requestTask.Result;
-			foreach (KeyValuePair<HttpRoute, RequestHandler> route in routing)
+			if (_listener.IsListening) throw new InvalidOperationException("Server already started");
+			_listener.Start();
+			_listener.Prefixes.Add(BaseUrl);
+
+			var c = TaskScheduler.Current;
+
+			var l = Listen();
+		}
+
+		private async Task Listen()
+		{
+			var taskPool = new HashSet<Task>();
+			for (int i = 0; i < MaxConcurrentRequests; i++)
+				taskPool.Add(_listener.GetContextAsync());
+
+			while (_listener.IsListening)
 			{
-				if (route.Key.CanAccept(context.Request))
+				Console.WriteLine($"Waiting... {Thread.CurrentThread.ManagedThreadId}");
+				Task task = await Task.WhenAny(taskPool);
+				taskPool.Remove(task);
+
+				Console.WriteLine($"Task completed {Thread.CurrentThread.ManagedThreadId}");
+
+				if (task is Task<HttpListenerContext>)
 				{
-					route.Value.HandleRequest(context);
-					return;
+					var context = (task as Task<HttpListenerContext>).Result;
+					taskPool.Add(_listener.GetContextAsync());
+					taskPool.Add(Task.Factory.StartNew(HandleClient, context));
+					//taskPool.Add(HandleClient(context));
 				}
 			}
-			Console.WriteLine($"Request: {context.Request.RawUrl}");
-			new StaticFileHandler().HandleRequest(context);
+		}
+
+		private async Task HandleClient(object c)
+		{
+			HttpListenerContext context = (HttpListenerContext)c;
+			try
+			{
+				Console.WriteLine($"Begin handle {context.GetHashCode()} {Thread.CurrentThread.ManagedThreadId}");
+				Console.WriteLine($"Request: {context.Request.RawUrl}");
+
+				foreach (KeyValuePair<HttpRoute, RequestHandler> route in _routing)
+				{
+					if (route.Key.CanAccept(context.Request))
+					{
+						await route.Value.HandleRequest(context);
+						return;
+					}
+				}
+			}
+			finally
+			{
+				Console.WriteLine($"End handle {context.GetHashCode()} {Thread.CurrentThread.ManagedThreadId}");
+				context.Response.OutputStream.Close();
+			}
+		}
+
+		public void Stop()
+		{
+			_listener.Stop();
 		}
 	}
-
 }
