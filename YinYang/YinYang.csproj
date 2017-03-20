@@ -65,9 +65,12 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="index.html">
+    <None Include="app\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app\index.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
