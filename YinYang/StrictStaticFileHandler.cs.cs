@@ -34,7 +34,7 @@ namespace YinYang
 			if (!info.Exists)
 			{
 				context.Response.StatusCode = 404;
-				return Task.CompletedTask;
+				return Task.FromResult<object>(null);
 			}
 			return info.OpenRead().CopyToAsync(context.Response.OutputStream);
 		}

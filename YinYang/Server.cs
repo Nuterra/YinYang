@@ -41,6 +41,13 @@ namespace YinYang
 					}
 				}
 			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.StackTrace);
+				Console.WriteLine(ex.Message);
+
+				Environment.Exit(-1);
+			}
 			finally
 			{
 				context.Response.OutputStream.Close();
