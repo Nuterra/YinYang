@@ -17,11 +17,14 @@ namespace YinYang
 
 		public Task HandleRequest(HttpListenerContext context)
 		{
-			Console.WriteLine($"Request: {context.Request.Url.AbsolutePath} ");
+			Console.WriteLine("Enter");
+			return Task.CompletedTask;
 			string path = context.Request.Url.AbsolutePath;
 			if (path.Length > 0)
 			{
+				Console.WriteLine($"Path [0] {path[0]}");
 				Debug.Assert(path[0] == '/');
+				Console.WriteLine("Assertion passed");
 				path = path.Substring(1);
 			}
 			if (path == "")
@@ -33,9 +36,11 @@ namespace YinYang
 			var info = new FileInfo(path);
 			if (!info.Exists)
 			{
+				Console.WriteLine("Not found");
 				context.Response.StatusCode = 404;
 				return Task.CompletedTask;
 			}
+			Console.WriteLine($"Sending: {path} {info.FullName}");
 			return info.OpenRead().CopyToAsync(context.Response.OutputStream);
 		}
 

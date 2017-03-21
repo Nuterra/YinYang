@@ -18,6 +18,8 @@ namespace YinYang
 				return;
 			}
 
+			AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+
 			foreach (string prefix in hosts)
 			{
 				server.Listener.Prefixes.Add(prefix);
@@ -37,6 +39,11 @@ namespace YinYang
 			Console.ReadLine();
 			tokenSource.Cancel();
 			server.Stop();
+		}
+
+		private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+		{
+			Console.WriteLine("First chance: " + e.Exception.GetType());
 		}
 	}
 }

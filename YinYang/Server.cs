@@ -32,17 +32,21 @@ namespace YinYang
 		{
 			try
 			{
+				Console.WriteLine($"Request: {context.Request.Url}");
 				foreach (KeyValuePair<HttpRoute, RequestHandler> route in _routing)
 				{
 					if (route.Key.CanAccept(context.Request))
 					{
+						Console.WriteLine($"Handler: {route.Value.GetType()}");
 						await route.Value.HandleRequest(context);
-						return;
+						Console.WriteLine($"Handler done: {route.Value.GetType()}");
+						break;
 					}
 				}
 			}
 			finally
 			{
+				Console.WriteLine($"Closing: {context.Request.Url}");
 				context.Response.OutputStream.Close();
 			}
 		}
