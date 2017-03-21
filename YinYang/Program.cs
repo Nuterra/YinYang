@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading;
 
 namespace YinYang
@@ -7,22 +8,35 @@ namespace YinYang
 	{
 		private static void Main(string[] args)
 		{
-			Server s = new Server();
-			s.Listener.Prefixes.Add("http://localhost/");
-			s.Listener.Prefixes.Add("http://127.0.0.1/");
+			Server server = new Server();
 
-			s.AddRoute(new HttpRoute("/login", HttpMethod.Get, HttpMethod.Post), new SteamLoginHandler());
-			s.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
-			s.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
+			var hosts = ConfigurationManager.AppSettings.GetValues("YinYang.Listener.Prefix");
+
+			if (hosts == null)
+			{
+				Console.WriteLine("No hosts specified in the .config file, startup cancelled");
+				return;
+			}
+
+			foreach (string prefix in hosts)
+			{
+				server.Listener.Prefixes.Add(prefix);
+			}
+
+			server.AddRoute(new HttpRoute("/login", HttpMethod.Get, HttpMethod.Post), new SteamLoginHandler());
+			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
+			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
 
 			CancellationTokenSource tokenSource = new CancellationTokenSource();
 			CancellationToken token = tokenSource.Token;
-			s.Listener.Start();
-			s.RunListenLoop(token);
+			server.Listener.Start();
+
+			server.RunListenLoop(token);
+
 			Console.WriteLine("Server Started, press enter to shutdown");
 			Console.ReadLine();
 			tokenSource.Cancel();
-			s.Stop();
+			server.Stop();
 		}
 	}
 }
