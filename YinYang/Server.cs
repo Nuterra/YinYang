@@ -21,7 +21,6 @@ namespace YinYang
 
 		public async Task RunListenLoop(CancellationToken token)
 		{
-			//_listener.BeginGetContext(ClientAvailable, null);
 			while (!token.IsCancellationRequested)
 			{
 				var context = await Listener.GetContextAsync();
