@@ -11,7 +11,7 @@ namespace YinYang
 		public async Task HandleRequest(HttpListenerContext context)
 		{
 			var openid = new LightOpenID(context.Request.Url);
-			openid.Realm = new Uri("http://localhost/");
+			openid.Realm = new Uri(context.Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped));
 			openid.ReturnUrl = new Uri(openid.Realm, "/login/landing");
 			switch (context.Request.Url.AbsolutePath)
 			{
