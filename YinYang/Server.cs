@@ -24,6 +24,7 @@ namespace YinYang
 			while (!token.IsCancellationRequested)
 			{
 				var context = await Listener.GetContextAsync();
+				Console.WriteLine($"Request: {context.Request.Url.AbsolutePath}");
 				HandleClient(context);
 			}
 		}

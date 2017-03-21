@@ -17,7 +17,6 @@ namespace YinYang
 
 		public Task HandleRequest(HttpListenerContext context)
 		{
-			Console.WriteLine($"Request: {context.Request.Url.AbsolutePath} ");
 			string path = context.Request.Url.AbsolutePath;
 			if (path.Length > 0)
 			{
