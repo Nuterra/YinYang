@@ -13,7 +13,7 @@ using System.Xml;
 namespace YinYang.Authentication
 {
 	//Source: https://github.com/SmItH197/SteamAuthentication/blob/master/steamauth/openid.php
-	internal sealed class LightOpenID
+	public sealed class LightOpenID
 	{
 		private string _host;
 		private string _server;
