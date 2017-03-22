@@ -12,17 +12,13 @@ using System.Xml;
 
 namespace YinYang.Authentication
 {
+	//Source: https://github.com/SmItH197/SteamAuthentication/blob/master/steamauth/openid.php
 	internal sealed class LightOpenID
 	{
 		private string _host;
 		private string _server;
 		private string _setupUrl;
 		private NameValueCollection _queryParams;
-
-		public List<string> Required { get; } = new List<string>();
-		public List<string> Optional { get; } = new List<string>();
-
-
 
 		/// <summary>
 		/// The URI the current server is hosted on.
@@ -35,8 +31,6 @@ namespace YinYang.Authentication
 		public Uri ReturnUrl { get; set; }// TODO: Ensure it is inside the realm
 
 		public string Mode { get; } // TODO: Get this from the _GET / _POST info
-
-		public string Identity { get; set; }
 
 		public LightOpenID()
 		{
@@ -51,11 +45,11 @@ namespace YinYang.Authentication
 			_setupUrl = _queryParams.GetValues("openid.user_setup_url")?.Single();
 		}
 
-		public async Task<string> GetAuthUrl()
+		public async Task<string> GetAuthUrl(string identity)
 		{
 			if (_server == null)
 			{
-				_server = await Discover("https://steamcommunity.com/openid");
+				_server = await Discover(identity);
 			}
 			return FormatAuthUrl_v2(false).ToString();
 		}
@@ -93,7 +87,7 @@ namespace YinYang.Authentication
 		private async Task<string> Discover(string url)
 		{
 			HttpClient client = new HttpClient();
-			string response = await client.GetStringAsync("https://steamcommunity.com/openid");
+			string response = await client.GetStringAsync(url);
 			var document = new XmlDocument();
 			document.LoadXml(response);
 			string xpath = "//*[local-name() = 'Service']";

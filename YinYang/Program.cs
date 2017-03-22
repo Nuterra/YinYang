@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading;
+using YinYang.Steam;
 
 namespace YinYang
 {

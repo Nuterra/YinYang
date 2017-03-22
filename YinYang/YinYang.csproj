@@ -82,12 +82,16 @@
     </Compile>
     <Compile Include="HandlerRoute.cs" />
     <Compile Include="HttpMethod.cs" />
-    <Compile Include="SteamLoginHandler.cs" />
+    <Compile Include="Steam\SteamAccountType.cs" />
+    <Compile Include="Steam\SteamID.cs" />
+    <Compile Include="Steam\SteamInstance.cs" />
+    <Compile Include="Steam\SteamLoginHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStringBuilder.cs" />
     <Compile Include="RequestHandler.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="Steam\SteamUniverse.cs" />
     <Compile Include="StrictStaticFileHandler.cs.cs" />
     <Compile Include="WaitHandler.cs" />
   </ItemGroup>
