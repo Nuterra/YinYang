@@ -74,14 +74,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\AccountCommands.cs" />
     <Compile Include="Authentication\LightOpenID.cs" />
-    <Compile Include="Data\Community.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Community.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="Community\Account.cs" />
+    <Compile Include="Community\AccountFlags.cs" />
+    <Compile Include="Community\CommunityContext.cs" />
+    <Compile Include="Community\CommunityExtensions.cs" />
+    <Compile Include="Community\CommunityMiddleware.cs" />
     <Compile Include="HandlerRoute.cs" />
     <Compile Include="HttpMethod.cs" />
+    <Compile Include="HttpRequest.cs" />
+    <Compile Include="Middleware.cs" />
+    <Compile Include="ServerExtensions.cs" />
+    <Compile Include="Session\HttpSession.cs" />
+    <Compile Include="Session\SessionMiddleware.cs" />
+    <Compile Include="Session\SessionExtensions.cs" />
     <Compile Include="Steam\SteamAccountType.cs" />
     <Compile Include="Steam\SteamID.cs" />
     <Compile Include="Steam\SteamInstance.cs" />
@@ -98,13 +105,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <EntityDeploy Include="Data\Community.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Community.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Data\Community.edmx.diagram">
-      <DependentUpon>Community.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

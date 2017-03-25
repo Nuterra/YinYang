@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using YinYang.Session;
 
 namespace YinYang
 {
@@ -15,9 +15,9 @@ namespace YinYang
 		public string RootDirectory { get; set; } = "";
 		public string DefaultFile { get; set; } = "index.html";
 
-		public Task HandleRequest(HttpListenerContext context)
+		public Task HandleRequestAsync(HttpRequest request)
 		{
-			string path = context.Request.Url.AbsolutePath;
+			string path = request.Request.Url.AbsolutePath;
 			if (path.Length > 0)
 			{
 				Debug.Assert(path[0] == '/');
@@ -32,10 +32,11 @@ namespace YinYang
 			var info = new FileInfo(path);
 			if (!info.Exists)
 			{
-				context.Response.StatusCode = 404;
+				request.Response.StatusCode = 404;
 				return Task.FromResult<object>(null);
 			}
-			return info.OpenRead().CopyToAsync(context.Response.OutputStream);
+
+			return info.OpenRead().CopyToAsync(request.Response.OutputStream);
 		}
 
 		private bool IsSafePath(string path)

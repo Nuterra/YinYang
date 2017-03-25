@@ -6,10 +6,21 @@ using System.Threading.Tasks;
 
 namespace YinYang
 {
+	public delegate Task RequestHandlerDelegate(HttpRequest request);
+
+	public delegate Task MiddlewareDelegate(HttpRequest request, RequestHandlerDelegate handler);
+
 	public sealed class Server
 	{
 		public HttpListener Listener { get; } = new HttpListener();
 		private Dictionary<HttpRoute, RequestHandler> _routing = new Dictionary<HttpRoute, RequestHandler>();
+
+		public RequestHandlerDelegate RequestHandler { get; set; }
+
+		public Server()
+		{
+			RequestHandler = HandleClient;
+		}
 
 		public void AddRoute(HttpRoute route, RequestHandler handler)
 		{
@@ -25,19 +36,20 @@ namespace YinYang
 			{
 				var context = await Listener.GetContextAsync();
 				Console.WriteLine($"Request: {context.Request.Url.AbsolutePath}");
-				HandleClient(context);
+				var request = new HttpRequest(context);
+				RequestHandler(request);
 			}
 		}
 
-		private async Task HandleClient(HttpListenerContext context)
+		private async Task HandleClient(HttpRequest request)
 		{
 			try
 			{
 				foreach (KeyValuePair<HttpRoute, RequestHandler> route in _routing)
 				{
-					if (route.Key.CanAccept(context.Request))
+					if (route.Key.CanAccept(request.Request))
 					{
-						await route.Value.HandleRequest(context);
+						await route.Value.HandleRequestAsync(request);
 						return;
 					}
 				}
@@ -51,7 +63,7 @@ namespace YinYang
 			}
 			finally
 			{
-				context.Response.OutputStream.Close();
+				await request.Dispose();
 			}
 		}
 

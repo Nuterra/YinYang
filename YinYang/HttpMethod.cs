@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace YinYang
 {
-	public struct HttpMethod
+	public sealed class HttpMethod
 	{
 		public static readonly HttpMethod Get = new HttpMethod("GET");
 		public static readonly HttpMethod Post = new HttpMethod("POST");
@@ -16,6 +16,7 @@ namespace YinYang
 		public HttpMethod(string name)
 		{
 			if (name == null) throw new ArgumentNullException(nameof(name));
+			if (name.Length == 0) throw new ArgumentException("Invalid method name, cannot be empty", nameof(name));
 			if (!IsValidHttpMethod(name)) throw new ArgumentException("Invalid method name, can only contain letters", nameof(name));
 			_name = name.ToUpper();
 		}

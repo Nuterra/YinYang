@@ -8,7 +8,7 @@ namespace YinYang
 {
 	internal class WaitHandler : RequestHandler
 	{
-		public async Task HandleRequest(HttpListenerContext context)
+		public async Task HandleRequestAsync(HttpRequest request)
 		{
 			int threadCount = Process.GetCurrentProcess().Threads.Count;
 			Console.WriteLine($"Threads: {threadCount}");

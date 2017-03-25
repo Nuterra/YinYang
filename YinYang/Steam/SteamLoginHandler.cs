@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using YinYang.Authentication;
+using YinYang.Community;
+using YinYang.Session;
 
 namespace YinYang.Steam
 {
@@ -11,51 +14,51 @@ namespace YinYang.Steam
 		private const string SteamClaimNamespace = "http://steamcommunity.com/openid/id/";
 		private const string FailureMessage = "Invalid Identity";
 
-		public async Task HandleRequest(HttpListenerContext context)
+		public async Task HandleRequestAsync(HttpRequest request)
 		{
-			LightOpenID openID = InitializeOpenID(context);
-			switch (context.Request.Url.AbsolutePath)
+			LightOpenID openID = InitializeOpenID(request);
+			switch (request.Request.Url.AbsolutePath)
 			{
 				case "/login":
-					await AuthenticationRedirect(context, openID);
+					await AuthenticationRedirect(request, openID);
 					break;
 
 				case "/login/landing":
-					await HandleLanding(context, openID);
+					await HandleLanding(request, openID);
 					break;
 			}
 		}
 
-		private static async Task AuthenticationRedirect(HttpListenerContext context, LightOpenID openID)
+		private static async Task AuthenticationRedirect(HttpRequest request, LightOpenID openID)
 		{
 			string s = await openID.GetAuthUrl("http://steamcommunity.com/openid/");
-			context.Response.Redirect(s);
+			request.Response.Redirect(s);
 		}
 
-		private static LightOpenID InitializeOpenID(HttpListenerContext context)
+		private static LightOpenID InitializeOpenID(HttpRequest request)
 		{
-			var openID = new LightOpenID(context.Request.Url);
-			openID.Realm = new Uri(context.Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped));
+			var openID = new LightOpenID(request.Request.Url);
+			openID.Realm = new Uri(request.Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped));
 			openID.ReturnUrl = new Uri(openID.Realm, "/login/landing");
 			return openID;
 		}
 
-		private async Task HandleLanding(HttpListenerContext context, LightOpenID openID)
+		private async Task HandleLanding(HttpRequest request, LightOpenID openID)
 		{
-			using (StreamWriter content = new StreamWriter(context.Response.OutputStream))
+			using (StreamWriter content = new StreamWriter(request.Response.OutputStream))
 			{
 				bool valid = await openID.Validate();
 
 				if (!valid)
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					request.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					await content.WriteAsync(FailureMessage);
 					return;
 				}
 
 				if (openID.ClaimedID == null || !openID.ClaimedID.StartsWith(SteamClaimNamespace))
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					request.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					await content.WriteAsync(FailureMessage);
 					return;
 				}
@@ -63,26 +66,52 @@ namespace YinYang.Steam
 				long steamID64;
 				if (!long.TryParse(openID.ClaimedID.Substring(SteamClaimNamespace.Length), out steamID64))
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					request.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					await content.WriteAsync(FailureMessage);
 					return;
 				}
 
 				var steamID = new SteamID(steamID64);
-
 				if (!steamID.IsValid())
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					request.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					await content.WriteAsync(FailureMessage);
 					return;
 				}
 
-				await content.WriteLineAsync($"Login accepted");
-				await content.WriteLineAsync($"Universe: {steamID.Universe}");
-				await content.WriteLineAsync($"Instance: {steamID.Instance}");
-				await content.WriteLineAsync($"Type: {steamID.Type}");
-				await content.WriteLineAsync($"AccountID: {steamID.AccountID}");
+				await HandleValidLogin(request, content, steamID);
 			}
+		}
+
+		private async Task HandleValidLogin(HttpRequest request, StreamWriter content, SteamID steamID)
+		{
+			var session = request.GetSession();
+			session.SteamID = steamID;
+
+			var community = request.GetCommunity();
+			long steamID64 = steamID.ToSteamID64();
+			Account account = community.Accounts.SingleOrDefault(acc => acc.SteamID == steamID64);
+
+			if (account == null)
+			{
+				Console.WriteLine($"Creating account for: {steamID64}");
+				account = community.Accounts.Create();
+				account.SteamID = steamID64;
+				account.Flags = AccountFlags.None;
+
+				community.Accounts.Add(account);
+				await community.SaveChangesAsync();
+
+				session.UserAccount = account;
+			}
+			else
+			{
+				Console.WriteLine($"Deleting account for: {steamID64}");
+				community.Accounts.Remove(account);
+				await community.SaveChangesAsync();
+			}
+
+			request.Response.Redirect(request.Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
 		}
 	}
 }

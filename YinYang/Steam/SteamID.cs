@@ -5,10 +5,10 @@ namespace YinYang.Steam
 	//Source: https://github.com/DoctorMcKay/php-steamid/blob/master/src/SteamID.php
 	public sealed class SteamID
 	{
-		public SteamUniverse Universe { get; set; }
-		public SteamAccountType Type { get; set; }
-		public SteamInstance Instance { get; set; }
-		public uint AccountID { get; set; }
+		public SteamUniverse Universe { get; }
+		public SteamAccountType Type { get; }
+		public SteamInstance Instance { get; }
+		public uint AccountID { get; }
 
 		public SteamID()
 		{
@@ -52,7 +52,7 @@ namespace YinYang.Steam
 		{
 			var accountIdLowBit = AccountID & 1;
 			var accountIdHighBits = (AccountID >> 1) & 0x7FFFFFF;
-			return $"STEAM_{Universe}:{accountIdLowBit}:{accountIdHighBits}";
+			return $"STEAM_{(int)Universe}:{accountIdLowBit}:{accountIdHighBits}";
 		}
 
 		public long ToSteamID64()

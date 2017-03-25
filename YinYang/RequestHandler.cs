@@ -6,6 +6,6 @@ namespace YinYang
 {
 	public interface RequestHandler
 	{
-		Task HandleRequest(HttpListenerContext context);
+		Task HandleRequestAsync(HttpRequest reqiest);
 	}
 }
