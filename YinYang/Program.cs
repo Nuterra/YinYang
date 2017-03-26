@@ -32,6 +32,7 @@ namespace YinYang
 			}
 
 			server.AddRoute(new HttpRoute("/login", HttpMethod.Get, HttpMethod.Post), new SteamLoginHandler());
+			server.AddRoute(new HttpRoute("/api/account", HttpMethod.Get, HttpMethod.Post), new Api.AccountCommands());
 			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
 

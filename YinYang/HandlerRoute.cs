@@ -18,7 +18,8 @@ namespace YinYang
 
 		public bool CanAccept(HttpListenerRequest request)
 		{
-			return Methods.Contains(request.HttpMethod) && request.Url.AbsolutePath.StartsWith(Prefix);
+			var method = HttpMethod.Parse(request.HttpMethod);
+			return Methods.Contains(method) && request.Url.AbsolutePath.StartsWith(Prefix);
 		}
 	}
 }

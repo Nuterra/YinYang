@@ -90,7 +90,7 @@ namespace YinYang.Steam
 
 			var community = request.GetCommunity();
 			long steamID64 = steamID.ToSteamID64();
-			Account account = community.Accounts.SingleOrDefault(acc => acc.SteamID == steamID64);
+			Account account = await community.Accounts.GetBySteamIDAsync(steamID64);
 
 			if (account == null)
 			{

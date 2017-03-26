@@ -21,12 +21,7 @@ namespace YinYang
 			_name = name.ToUpper();
 		}
 
-		public static implicit operator string(HttpMethod method)
-		{
-			return method._name;
-		}
-
-		public static implicit operator HttpMethod(string method)
+		public static HttpMethod Parse(string method)
 		{
 			return new HttpMethod(method);
 		}

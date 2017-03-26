@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Data.Entity;
 using System.Threading.Tasks;
+using YinYang.Steam;
 
 namespace YinYang.Community
 {
@@ -22,17 +21,29 @@ namespace YinYang.Community
 			return null;
 		}
 
-		internal static void SetCommunity(this HttpRequest request, CommunityContext session)
+		internal static void SetCommunity(this HttpRequest request, CommunityContext community)
 		{
 			if (request == null) throw new ArgumentNullException(nameof(request));
 			if (request.AttachedContext.ContainsKey(AttachedContextKey))
 			{
-				request.AttachedContext[AttachedContextKey] = session;
+				request.AttachedContext[AttachedContextKey] = community;
 			}
 			else
 			{
-				request.AttachedContext.Add(AttachedContextKey, session);
+				request.AttachedContext.Add(AttachedContextKey, community);
 			}
+		}
+
+		public static Task<Account> GetBySteamIDAsync(this DbSet<Account> accounts, SteamID steamID)
+		{
+			if (steamID == null) throw new ArgumentNullException(nameof(steamID));
+			return accounts.GetBySteamIDAsync(steamID.ToSteamID64());
+		}
+
+		public static Task<Account> GetBySteamIDAsync(this DbSet<Account> accounts, long steamID64)
+		{
+			if (accounts == null) throw new ArgumentNullException(nameof(accounts));
+			return accounts.SingleOrDefaultAsync(acc => acc.SteamID == steamID64);
 		}
 	}
 }
