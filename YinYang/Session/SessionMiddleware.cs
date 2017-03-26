@@ -38,13 +38,14 @@ namespace YinYang.Session
 
 		private async Task CreateNewSession(HttpRequest request)
 		{
+			HttpSession newSession = new HttpSession(TimeSpan.FromHours(1));
 			string sessionGuid = Guid.NewGuid().ToString();
 			Cookie sessionCookie = new Cookie(SessionCookieName, sessionGuid)
 			{
 				HttpOnly = true,
+				Expires = newSession.Expires,
 			};
 			request.Response.SetCookie(sessionCookie);
-			HttpSession newSession = new HttpSession(TimeSpan.FromHours(1));
 			_sessions[sessionGuid] = newSession;
 			request.SetSession(newSession);
 		}

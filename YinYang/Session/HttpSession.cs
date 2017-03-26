@@ -10,7 +10,7 @@ namespace YinYang.Session
 		public DateTime Created { get; }
 		public DateTime Expires { get; private set; }
 		public bool IsNew { get; private set; }
-		public SteamID SteamID { get; set; } = new SteamID();
+		public SteamID SteamID { get; set; }
 		public Account UserAccount { get; set; }
 
 		public HttpSession(TimeSpan timeValid)

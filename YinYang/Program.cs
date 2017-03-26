@@ -36,8 +36,8 @@ namespace YinYang
 			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
 
-			server.AddMiddleware(new SessionMiddleware());
 			server.AddMiddleware(new CommunityMiddleware());
+			server.AddMiddleware(new SessionMiddleware());
 
 			return server;
 		}
