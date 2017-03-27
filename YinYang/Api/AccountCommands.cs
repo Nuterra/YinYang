@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.Owin;
 using YinYang.Community;
 using YinYang.Session;
 using YinYang.Steam;
@@ -21,25 +21,22 @@ namespace YinYang.Api
 			_routing.Add(HttpMethod.Delete, Delete);
 		}
 
-		public Task HandleRequestAsync(HttpRequest request)
+		public Task HandleRequestAsync(IOwinContext request)
 		{
-#warning Throw exception here; it crashes the server
-			return _routing[request.Method](request);
+			var method = HttpMethod.Parse(request.Request.Method);
+			return _routing[method](request);
 		}
 
-		private async Task Get(HttpRequest request)
+		private async Task Get(IOwinContext request)
 		{
-			var args = HttpUtility.ParseQueryString(request.Request.Url.Query);
+			var args = request.Request.Query;
 			var id = long.Parse(args["id"]);
 
 			var community = request.GetCommunity();
 			var account = await community.Accounts.GetBySteamIDAsync(id);
 			if (account != null)
 			{
-				await request.ResponseWriter.WriteLineAsync("Found the user");
-				await request.ResponseWriter.WriteLineAsync(account.Username);
-				await request.ResponseWriter.WriteLineAsync(account.SteamID.ToString());
-				await request.ResponseWriter.WriteLineAsync(account.Flags.ToString());
+				await request.Response.WriteAsync($"Found the user\n{account.Username}\n{account.SteamID.ToString()}\n{account.Flags.ToString()}\n");
 			}
 			else
 			{
@@ -47,14 +44,14 @@ namespace YinYang.Api
 			}
 		}
 
-		private async Task Post(HttpRequest request)
+		private async Task Post(IOwinContext request)
 		{
 			request.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
 		}
 
-		private async Task Delete(HttpRequest request)
+		private async Task Delete(IOwinContext request)
 		{
-			var args = HttpUtility.ParseQueryString(request.Request.Url.Query);
+			var args = request.Request.Query;
 			var steamID64 = long.Parse(args["id"]);
 			var id = new SteamID(steamID64);
 			var community = request.GetCommunity();

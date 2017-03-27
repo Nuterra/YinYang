@@ -4,34 +4,28 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 using YinYang.Session;
 
 namespace YinYang.Community
 {
 	public sealed class CommunityMiddleware : Middleware
 	{
-		public async Task HandleRequestAsync(HttpRequest request, RequestHandlerDelegate continuation)
+		public async Task HandleRequestAsync(IOwinContext context, RequestHandlerDelegate continuation)
 		{
 			using (CommunityContext community = new CommunityContext("YinYang.Community"))
 			{
-				request.SetCommunity(community);
-
-				var session = request.GetSession();
-
+				context.SetCommunity(community);
+				var session = context.GetSession();
 				if (session.SteamID == null)
 				{
-					Cookie steamIDCookie = new Cookie("YinYang.SteamID", "0");
-					steamIDCookie.Expires = DateTime.Now + TimeSpan.FromMinutes(1);
-					//request.Response.SetCookie(steamIDCookie);
+					context.Response.Cookies.Delete("YinYang.SteamID");
 				}
 				else
 				{
-					Cookie steamIDCookie = new Cookie("YinYang.SteamID", session.SteamID.ToSteamID64().ToString());
-					steamIDCookie.Expires = DateTime.Now + TimeSpan.FromMinutes(1);
-					request.Response.SetCookie(steamIDCookie);
+					context.Response.Cookies.Append("YinYang.SteamID", session.SteamID.ToSteamID64().ToString());
 				}
-
-				await continuation(request);
+				await continuation(context);
 			}
 		}
 	}

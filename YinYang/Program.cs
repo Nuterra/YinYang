@@ -5,6 +5,10 @@ using System.Threading;
 using YinYang.Community;
 using YinYang.Session;
 using YinYang.Steam;
+using Microsoft.Owin.Hosting;
+using Owin;
+using Microsoft.Owin;
+using System.Threading.Tasks;
 
 namespace YinYang
 {
@@ -19,17 +23,18 @@ namespace YinYang
 				return;
 			}
 
-			var server = SetupServer(hosts);
-			RunServer(server);
+			string host = hosts.First();
+			using (WebApp.Start(host, SetupServer))
+			{
+				Console.WriteLine($"Host: {host}");
+				Console.WriteLine("Server Started, press enter to shutdown");
+				Console.ReadLine();
+			}
 		}
 
-		private static Server SetupServer(string[] hosts)
+		private static void SetupServer(IAppBuilder app)
 		{
-			Server server = new Server();
-			foreach (string prefix in hosts)
-			{
-				server.Listener.Prefixes.Add(prefix);
-			}
+			var server = new Server();
 
 			server.AddRoute(new HttpRoute("/login", HttpMethod.Get, HttpMethod.Post), new SteamLoginHandler());
 			server.AddRoute(new HttpRoute("/api/account", HttpMethod.Get, HttpMethod.Post), new Api.AccountCommands());
@@ -39,21 +44,7 @@ namespace YinYang
 			server.AddMiddleware(new CommunityMiddleware());
 			server.AddMiddleware(new SessionMiddleware());
 
-			return server;
-		}
-
-		private static void RunServer(Server server)
-		{
-			CancellationTokenSource tokenSource = new CancellationTokenSource();
-			CancellationToken token = tokenSource.Token;
-			server.Listener.Start();
-
-			server.RunListenLoop(token);
-
-			Console.WriteLine("Server Started, press enter to shutdown");
-			Console.ReadLine();
-			tokenSource.Cancel();
-			server.Stop();
+			app.Run(context => server.RequestHandler(context));
 		}
 	}
 }

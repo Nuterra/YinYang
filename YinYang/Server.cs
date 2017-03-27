@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 
 namespace YinYang
 {
-	public delegate Task RequestHandlerDelegate(HttpRequest request);
+	public delegate Task RequestHandlerDelegate(IOwinContext request);
 
-	public delegate Task MiddlewareDelegate(HttpRequest request, RequestHandlerDelegate handler);
+	public delegate Task MiddlewareDelegate(IOwinContext request, RequestHandlerDelegate handler);
 
 	public sealed class Server
 	{
@@ -30,18 +31,7 @@ namespace YinYang
 			_routing.Add(route, handler);
 		}
 
-		public async Task RunListenLoop(CancellationToken token)
-		{
-			while (!token.IsCancellationRequested)
-			{
-				var context = await Listener.GetContextAsync();
-				Console.WriteLine($"Request: {context.Request.Url.AbsolutePath}");
-				var request = new HttpRequest(context);
-				RequestHandler(request);
-			}
-		}
-
-		private async Task HandleClient(HttpRequest request)
+		private async Task HandleClient(IOwinContext request)
 		{
 			try
 			{
@@ -58,12 +48,6 @@ namespace YinYang
 			{
 				Console.WriteLine(ex.StackTrace);
 				Console.WriteLine(ex.Message);
-
-				Environment.Exit(-1);
-			}
-			finally
-			{
-				await request.Dispose();
 			}
 		}
 
