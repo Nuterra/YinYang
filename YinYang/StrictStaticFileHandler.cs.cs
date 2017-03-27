@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 using YinYang.Session;
 
 namespace YinYang
@@ -15,14 +16,11 @@ namespace YinYang
 		public string RootDirectory { get; set; } = "";
 		public string DefaultFile { get; set; } = "index.html";
 
-		public Task HandleRequestAsync(HttpRequest request)
+		public Task HandleRequestAsync(IOwinContext request)
 		{
-			string path = request.Request.Url.AbsolutePath;
-			if (path.Length > 0)
-			{
-				Debug.Assert(path[0] == '/');
-				path = path.Substring(1);
-			}
+			string path = request.Request.Path.Value;
+			Debug.Assert(path[0] == '/');
+			path = path.Substring(1);
 			if (path == "")
 			{
 				path = "index.html";
@@ -36,7 +34,7 @@ namespace YinYang
 				return Task.FromResult<object>(null);
 			}
 
-			return info.OpenRead().CopyToAsync(request.Response.OutputStream);
+			return info.OpenRead().CopyToAsync(request.Response.Body);
 		}
 
 		private bool IsSafePath(string path)

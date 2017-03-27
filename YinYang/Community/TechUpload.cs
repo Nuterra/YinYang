@@ -6,17 +6,19 @@ using System.Runtime.Serialization;
 namespace YinYang.Community
 {
 	[DataContract]
-	public class Account
+	public class TechUpload
 	{
 		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		[DataMember]
-		public long SteamID { get; set; }
+		public int ID { get; set; }
+
+		[Required]
+		public long OwnerID { get; set; }
+
+		[ForeignKey("OwnerID")]
+		public virtual Account Owner { get; set; }
 
 		[DataMember]
-		public string Username { get; set; }
-
-		[DataMember]
-		public AccountFlags Flags { get; set; }
+		public string Title { get; set; }
 	}
 }

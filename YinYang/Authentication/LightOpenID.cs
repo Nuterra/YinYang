@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Xml;
+using Microsoft.Owin;
 
 namespace YinYang.Authentication
 {
@@ -18,7 +14,7 @@ namespace YinYang.Authentication
 		private string _host;
 		private string _server;
 		private string _setupUrl;
-		private NameValueCollection _queryParams;
+		private IReadableStringCollection _queryParams;
 
 		/// <summary>
 		/// The URI the current server is hosted on.
@@ -34,12 +30,11 @@ namespace YinYang.Authentication
 
 		public LightOpenID()
 		{
-
 		}
 
-		public LightOpenID(Uri clientReturnUri)
+		public LightOpenID(IOwinRequest request)
 		{
-			_queryParams = HttpUtility.ParseQueryString(clientReturnUri.Query);
+			_queryParams = request.Query;
 
 			Mode = _queryParams.GetValues("openid.mode")?.Single();
 			_setupUrl = _queryParams.GetValues("openid.user_setup_url")?.Single();
@@ -66,13 +61,13 @@ namespace YinYang.Authentication
 			arguments.Add("openid.identity", thing);
 			arguments.Add("openid.claimed_id", thing);
 
-
 			UriBuilder builder = new UriBuilder(_server);
 
 			builder.Query += GetUriString("&", arguments);
 
 			return builder.Uri;
 		}
+
 		private string GetUriString(string argSeperator, Dictionary<string, string> items)
 		{
 			return String.Join(argSeperator,
@@ -94,7 +89,9 @@ namespace YinYang.Authentication
 			var node = document.SelectSingleNode(xpath);
 			return node["URI"].InnerText;
 		}
+
 		public string ClaimedID { get; private set; }
+
 		public async Task<bool> Validate()
 		{
 			if (_setupUrl != null)

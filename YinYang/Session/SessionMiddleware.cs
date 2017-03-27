@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 
 namespace YinYang.Session
 {
-	internal sealed class SessionMiddleware : Middleware
+	internal sealed class SessionMiddleware : OwinMiddleware
 	{
 		private const string SessionCookieName = "YinYang.Session";
 
 		private Dictionary<string, HttpSession> _sessions = new Dictionary<string, HttpSession>();
 
-		public async Task HandleRequestAsync(HttpRequest request, RequestHandlerDelegate continuation)
+		public SessionMiddleware(OwinMiddleware next) : base(next)
 		{
-			var sessionGuid = request.Request.Cookies[SessionCookieName]?.Value;
+		}
+
+		public override async Task Invoke(IOwinContext context)
+		{
+			var sessionGuid = context.Request.Cookies[SessionCookieName];
 
 			if (sessionGuid == null)
 			{
-				await CreateNewSession(request);
+				await CreateNewSession(context);
 			}
 			else
 			{
@@ -25,29 +29,29 @@ namespace YinYang.Session
 				if (_sessions.TryGetValue(sessionGuid, out existingSession))
 				{
 					existingSession.MarkUsed();
-					request.SetSession(existingSession);
+					context.SetSession(existingSession);
 				}
 				else
 				{
-					await CreateNewSession(request);
+					await CreateNewSession(context);
 				}
 			}
 
-			await continuation(request);
+			await Next.Invoke(context);
 		}
 
-		private async Task CreateNewSession(HttpRequest request)
+		private Task CreateNewSession(IOwinContext context)
 		{
 			HttpSession newSession = new HttpSession(TimeSpan.FromHours(1));
 			string sessionGuid = Guid.NewGuid().ToString();
-			Cookie sessionCookie = new Cookie(SessionCookieName, sessionGuid)
+			context.Response.Cookies.Append(SessionCookieName, sessionGuid, new CookieOptions
 			{
 				HttpOnly = true,
-				Expires = newSession.Expires,
-			};
-			request.Response.SetCookie(sessionCookie);
+				Expires = newSession.Expires
+			});
 			_sessions[sessionGuid] = newSession;
-			request.SetSession(newSession);
+			context.SetSession(newSession);
+			return Task.FromResult<object>(null);
 		}
 	}
 }

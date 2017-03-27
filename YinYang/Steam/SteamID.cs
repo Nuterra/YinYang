@@ -48,6 +48,16 @@ namespace YinYang.Steam
 			AccountID = (uint)(steamID64 & 0xFFFFFFFF);
 		}
 
+
+		internal SteamID(SteamUniverse universe, SteamAccountType accountType, SteamInstance instance, uint accountID)
+		{
+			Universe = universe;
+			Type = accountType;
+			Instance = instance;
+			AccountID = accountID;
+		}
+
+
 		public string ToSteamID2()
 		{
 			var accountIdLowBit = AccountID & 1;
@@ -103,5 +113,6 @@ namespace YinYang.Steam
 		{
 			return ToSteamID64().ToString();
 		}
+
 	}
 }

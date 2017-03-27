@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Threading.Tasks;
+using Microsoft.Owin;
+using Owin;
 using YinYang.Steam;
 
 namespace YinYang.Community
@@ -9,29 +11,22 @@ namespace YinYang.Community
 	{
 		internal const string AttachedContextKey = "YinYang.Community";
 
-		public static CommunityContext GetCommunity(this HttpRequest request)
+		public static IAppBuilder UseCommunity(this IAppBuilder app)
 		{
-			if (request == null) throw new ArgumentNullException(nameof(request));
-
-			object result;
-			if (request.AttachedContext.TryGetValue(AttachedContextKey, out result))
-			{
-				return (CommunityContext)result;
-			}
-			return null;
+			if (app == null) throw new ArgumentNullException(nameof(app));
+			return app.Use(typeof(CommunityMiddleware));
 		}
 
-		internal static void SetCommunity(this HttpRequest request, CommunityContext community)
+		public static CommunityContext GetCommunity(this IOwinContext request)
 		{
 			if (request == null) throw new ArgumentNullException(nameof(request));
-			if (request.AttachedContext.ContainsKey(AttachedContextKey))
-			{
-				request.AttachedContext[AttachedContextKey] = community;
-			}
-			else
-			{
-				request.AttachedContext.Add(AttachedContextKey, community);
-			}
+			return request.Get<CommunityContext>(AttachedContextKey);
+		}
+
+		internal static void SetCommunity(this IOwinContext request, CommunityContext community)
+		{
+			if (request == null) throw new ArgumentNullException(nameof(request));
+			request.Set(AttachedContextKey, community);
 		}
 
 		public static Task<Account> GetBySteamIDAsync(this DbSet<Account> accounts, SteamID steamID)

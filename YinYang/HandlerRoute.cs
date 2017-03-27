@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using Microsoft.Owin;
 
 namespace YinYang
 {
@@ -16,10 +17,10 @@ namespace YinYang
 			Methods = methods ?? new HttpMethod[0];
 		}
 
-		public bool CanAccept(HttpListenerRequest request)
+		public bool CanAccept(IOwinRequest request)
 		{
-			var method = HttpMethod.Parse(request.HttpMethod);
-			return Methods.Contains(method) && request.Url.AbsolutePath.StartsWith(Prefix);
+			var method = HttpMethod.Parse(request.Method);
+			return Methods.Contains(method) && request.Uri.AbsolutePath.StartsWith(Prefix);
 		}
 	}
 }

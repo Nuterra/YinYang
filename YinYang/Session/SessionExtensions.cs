@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Owin;
+using Owin;
 
 namespace YinYang.Session
 {
@@ -6,29 +8,22 @@ namespace YinYang.Session
 	{
 		internal const string AttachedContextKey = "YinYang.Session";
 
-		public static HttpSession GetSession(this HttpRequest request)
+		public static IAppBuilder UseSession(this IAppBuilder app)
 		{
-			if (request == null) throw new ArgumentNullException(nameof(request));
-
-			object result;
-			if (request.AttachedContext.TryGetValue(AttachedContextKey, out result))
-			{
-				return (HttpSession)result;
-			}
-			return null;
+			if (app == null) throw new ArgumentNullException(nameof(app));
+			return app.Use(typeof(SessionMiddleware));
 		}
 
-		internal static void SetSession(this HttpRequest request, HttpSession session)
+		public static HttpSession GetSession(this IOwinContext request)
 		{
 			if (request == null) throw new ArgumentNullException(nameof(request));
-			if (request.AttachedContext.ContainsKey(AttachedContextKey))
-			{
-				request.AttachedContext[AttachedContextKey] = session;
-			}
-			else
-			{
-				request.AttachedContext.Add(AttachedContextKey, session);
-			}
+			return request.Get<HttpSession>(AttachedContextKey);
+		}
+
+		internal static void SetSession(this IOwinContext request, HttpSession session)
+		{
+			if (request == null) throw new ArgumentNullException(nameof(request));
+			request.Set(AttachedContextKey, session);
 		}
 	}
 }

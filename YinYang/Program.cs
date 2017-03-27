@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Threading;
+using Microsoft.Owin.Hosting;
+using Owin;
+using YinYang.Api;
 using YinYang.Community;
 using YinYang.Session;
 using YinYang.Steam;
@@ -19,41 +21,47 @@ namespace YinYang
 				return;
 			}
 
-			var server = SetupServer(hosts);
-			RunServer(server);
+			string host = hosts.First();
+			using (WebApp.Start(host, SetupServer))
+			{
+				Console.WriteLine($"Host: {host}");
+				Console.WriteLine("Server Started, press enter to shutdown");
+				Console.ReadLine();
+			}
 		}
 
-		private static Server SetupServer(string[] hosts)
+		private static void SetupServer(IAppBuilder app)
 		{
-			Server server = new Server();
-			foreach (string prefix in hosts)
-			{
-				server.Listener.Prefixes.Add(prefix);
-			}
+			var server = new Server();
 
-			server.AddRoute(new HttpRoute("/login", HttpMethod.Get, HttpMethod.Post), new SteamLoginHandler());
-			server.AddRoute(new HttpRoute("/api/account", HttpMethod.Get, HttpMethod.Post), new Api.AccountCommands());
+			app.Map("/static", ConfigureStaticFiles);
+
+			app.UseSession();
+			app.UseCommunity();
+
+			app.Map("/login", ConfigureLogin);
+
 			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
 
-			server.AddMiddleware(new CommunityMiddleware());
-			server.AddMiddleware(new SessionMiddleware());
+			app.Map("/api/account", ConfigureAccountApi);
 
-			return server;
+			app.Run(context => server.HandleClient(context));
 		}
 
-		private static void RunServer(Server server)
+		private static void ConfigureStaticFiles(IAppBuilder app)
 		{
-			CancellationTokenSource tokenSource = new CancellationTokenSource();
-			CancellationToken token = tokenSource.Token;
-			server.Listener.Start();
+			app.Run(new StaticFileHandler() { RootDirectory = "app" }.HandleRequestAsync);
+		}
 
-			server.RunListenLoop(token);
+		private static void ConfigureLogin(IAppBuilder app)
+		{
+			app.Run(new SteamLoginHandler().HandleRequestAsync);
+		}
 
-			Console.WriteLine("Server Started, press enter to shutdown");
-			Console.ReadLine();
-			tokenSource.Cancel();
-			server.Stop();
+		private static void ConfigureAccountApi(IAppBuilder app)
+		{
+			app.Run(new AccountCommands().HandleRequestAsync);
 		}
 	}
 }
