@@ -1,11 +1,18 @@
 ﻿using System;
 using Microsoft.Owin;
+using Owin;
 
 namespace YinYang.Session
 {
 	public static class SessionExtensions
 	{
 		internal const string AttachedContextKey = "YinYang.Session";
+
+		public static IAppBuilder UseSession(this IAppBuilder app)
+		{
+			if (app == null) throw new ArgumentNullException(nameof(app));
+			return app.Use(typeof(SessionMiddleware));
+		}
 
 		public static HttpSession GetSession(this IOwinContext request)
 		{

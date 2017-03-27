@@ -100,14 +100,6 @@ namespace YinYang.Steam
 
 				community.Accounts.Add(account);
 				await community.SaveChangesAsync();
-
-				session.UserAccount = account;
-			}
-			else
-			{
-				Console.WriteLine($"Deleting account for: {steamID64}");
-				community.Accounts.Remove(account);
-				await community.SaveChangesAsync();
 			}
 
 			request.Response.Redirect(request.Request.Uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));

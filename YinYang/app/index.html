@@ -2,15 +2,36 @@
     <head>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.0/mustache.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="jquery-cookie.js"></script>
-        <script src="index.js"></script>
+        <script src="static/jquery-cookie.js"></script>
+        <script src="static/index.js"></script>
         <script id="login-form" type="x-tmpl-mustache">
-            <form action="login">
+            <form action="/login">
                 <input type="submit" value="Login with Steam" />
             </form>
         </script>
         <script id="profile-info" type="x-tmpl-mustache">
-            <p>You are logged in :D <strong>{{power}}</strong>, {{name}}!</p>
+            <p>You are logged in :D <strong>{{steamID}}</strong>, {{username}}!</p>
+            <form>
+                <input type="text" value="__PENDING__" />
+                <input type="submit" value="Change username" />
+            </form>
+        </script>
+        <script id="user-list" type="x-tmpl-mustache">
+            <table></table>
+        </script>
+        <script id="user-item" type="x-tmpl-mustache">
+            <tr>
+                <td>{{steamID}}</td>
+                <td class="username">{{username}}</td>
+                <td>
+                    {{#admin_mode}}
+                        <form data-steam-id="{{steamID}}">
+                            <input type="text" class="username" value="{{username}}" />
+                            <input type="submit" value="Change username" />
+                        </form>
+                    {{/admin_mode}}
+                </td>
+            </tr>
         </script>
     </head>
     <body>

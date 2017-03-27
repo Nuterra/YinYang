@@ -11,7 +11,6 @@ namespace YinYang.Session
 		public DateTime Expires { get; private set; }
 		public bool IsNew { get; private set; }
 		public SteamID SteamID { get; set; }
-		public Account UserAccount { get; set; }
 
 		public HttpSession(TimeSpan timeValid)
 		{
@@ -19,6 +18,8 @@ namespace YinYang.Session
 			Created = DateTime.Now;
 			Expires = Created;
 			ExtendLifetime(timeValid);
+			SteamID = new SteamID(76561198023393043);
+#warning REMOVE FROM PRODUCTION
 		}
 
 		public void MarkUsed()

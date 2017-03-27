@@ -68,6 +68,10 @@
       <HintPath>..\packages\MySql.Data.Entity.6.9.9\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
@@ -93,10 +97,15 @@
     <Compile Include="Community\CommunityContext.cs" />
     <Compile Include="Community\CommunityExtensions.cs" />
     <Compile Include="Community\CommunityMiddleware.cs" />
+    <Compile Include="Community\TechUpload.cs" />
     <Compile Include="HandlerRoute.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Middleware.cs" />
-    <Compile Include="ServerExtensions.cs" />
+    <Compile Include="Migrations\201703272153136_Initial.cs" />
+    <Compile Include="Migrations\201703272153136_Initial.Designer.cs">
+      <DependentUpon>201703272153136_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Session\HttpSession.cs" />
     <Compile Include="Session\SessionMiddleware.cs" />
     <Compile Include="Session\SessionExtensions.cs" />
@@ -134,6 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703272153136_Initial.resx">
+      <DependentUpon>201703272153136_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

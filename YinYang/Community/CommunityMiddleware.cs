@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using YinYang.Session;
 
 namespace YinYang.Community
 {
-	public sealed class CommunityMiddleware : Middleware
+	public sealed class CommunityMiddleware : OwinMiddleware
 	{
-		public async Task HandleRequestAsync(IOwinContext context, RequestHandlerDelegate continuation)
+		public CommunityMiddleware(OwinMiddleware next) : base(next)
 		{
-			using (CommunityContext community = new CommunityContext("YinYang.Community"))
+		}
+
+		public override async Task Invoke(IOwinContext context)
+		{
+			using (CommunityContext community = new CommunityContext())
 			{
 				context.SetCommunity(community);
 				var session = context.GetSession();
@@ -25,7 +26,8 @@ namespace YinYang.Community
 				{
 					context.Response.Cookies.Append("YinYang.SteamID", session.SteamID.ToSteamID64().ToString());
 				}
-				await continuation(context);
+
+				await Next.Invoke(context);
 			}
 		}
 	}

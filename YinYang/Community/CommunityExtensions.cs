@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using Owin;
 using YinYang.Steam;
 
 namespace YinYang.Community
@@ -9,6 +10,12 @@ namespace YinYang.Community
 	public static class CommunityExtensions
 	{
 		internal const string AttachedContextKey = "YinYang.Community";
+
+		public static IAppBuilder UseCommunity(this IAppBuilder app)
+		{
+			if (app == null) throw new ArgumentNullException(nameof(app));
+			return app.Use(typeof(CommunityMiddleware));
+		}
 
 		public static CommunityContext GetCommunity(this IOwinContext request)
 		{

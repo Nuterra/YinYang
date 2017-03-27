@@ -16,11 +16,8 @@ namespace YinYang
 		public HttpListener Listener { get; } = new HttpListener();
 		private Dictionary<HttpRoute, RequestHandler> _routing = new Dictionary<HttpRoute, RequestHandler>();
 
-		public RequestHandlerDelegate RequestHandler { get; set; }
-
 		public Server()
 		{
-			RequestHandler = HandleClient;
 		}
 
 		public void AddRoute(HttpRoute route, RequestHandler handler)
@@ -31,7 +28,7 @@ namespace YinYang
 			_routing.Add(route, handler);
 		}
 
-		private async Task HandleClient(IOwinContext request)
+		public async Task HandleClient(IOwinContext request)
 		{
 			try
 			{

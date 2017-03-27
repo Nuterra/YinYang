@@ -5,13 +5,17 @@ using Microsoft.Owin;
 
 namespace YinYang.Session
 {
-	internal sealed class SessionMiddleware : Middleware
+	internal sealed class SessionMiddleware : OwinMiddleware
 	{
 		private const string SessionCookieName = "YinYang.Session";
 
 		private Dictionary<string, HttpSession> _sessions = new Dictionary<string, HttpSession>();
 
-		public async Task HandleRequestAsync(IOwinContext context, RequestHandlerDelegate continuation)
+		public SessionMiddleware(OwinMiddleware next) : base(next)
+		{
+		}
+
+		public override async Task Invoke(IOwinContext context)
 		{
 			var sessionGuid = context.Request.Cookies[SessionCookieName];
 
@@ -33,10 +37,10 @@ namespace YinYang.Session
 				}
 			}
 
-			await continuation(context);
+			await Next.Invoke(context);
 		}
 
-		private async Task CreateNewSession(IOwinContext context)
+		private Task CreateNewSession(IOwinContext context)
 		{
 			HttpSession newSession = new HttpSession(TimeSpan.FromHours(1));
 			string sessionGuid = Guid.NewGuid().ToString();
@@ -47,6 +51,7 @@ namespace YinYang.Session
 			});
 			_sessions[sessionGuid] = newSession;
 			context.SetSession(newSession);
+			return Task.FromResult<object>(null);
 		}
 	}
 }

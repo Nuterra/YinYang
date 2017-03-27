@@ -18,12 +18,9 @@ namespace YinYang
 
 		public Task HandleRequestAsync(IOwinContext request)
 		{
-			string path = request.Request.Uri.AbsolutePath;
-			if (path.Length > 0)
-			{
-				Debug.Assert(path[0] == '/');
-				path = path.Substring(1);
-			}
+			string path = request.Request.Path.Value;
+			Debug.Assert(path[0] == '/');
+			path = path.Substring(1);
 			if (path == "")
 			{
 				path = "index.html";
