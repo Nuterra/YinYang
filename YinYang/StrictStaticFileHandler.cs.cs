@@ -16,7 +16,7 @@ namespace YinYang
 		public string RootDirectory { get; set; } = "";
 		public string DefaultFile { get; set; } = "index.html";
 
-		public Task HandleRequestAsync(IOwinContext request)
+		public async Task HandleRequestAsync(IOwinContext request)
 		{
 			string path = request.Request.Path.Value;
 			Debug.Assert(path[0] == '/');
@@ -31,10 +31,12 @@ namespace YinYang
 			if (!info.Exists)
 			{
 				request.Response.StatusCode = 404;
-				return Task.FromResult<object>(null);
+				return;
 			}
-
-			return info.OpenRead().CopyToAsync(request.Response.Body);
+			using (FileStream fs = info.OpenRead())
+			{
+				await fs.CopyToAsync(request.Response.Body);
+			}
 		}
 
 		private bool IsSafePath(string path)
