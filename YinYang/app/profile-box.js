@@ -1,13 +1,13 @@
-$(function () {
-    importTemplate('tmpl-profile-box', 'profile-box.html', function() {
-        var template = $(this).html();
+Nuterra.loadTemplate('tmpl-profile-box', '/app/profile-box.html', function() {
+    var template = $(this).html();
+    Mustache.parse(template);
 
-        //Parse it (optional, only necessary if template is to be used again)
-        Mustache.parse(template);
-        
-        //Render the data into the template
-        var rendered = Mustache.render(template, { profile: {steamID: "mysteamid", username: "im bob"} });
-
+    var steamId = $.cookie('YinYang.SteamID');
+    Nuterra.getAccount(steamId, function(account){
+        var accountData = {
+            profile: account,
+        };
+        var rendered = Mustache.render(template, accountData);
         $('#profile-box').html(rendered);
     });
 });

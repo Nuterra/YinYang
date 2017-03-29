@@ -1,36 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
         <!-- Javascript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.0/mustache.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="static/jquery-cookie.js"></script>
-        <script src="static/index.js"></script>
-        <script src="static/profile-box.js"></script>
-        <!-- Templates -->
-        <script type="x-tmpl-mustache" id="login-form">
-            
-        </script>
-        <script type="x-tmpl-mustache" id="profile-info">
-            <p>You are logged in :D <strong>{{steamID}}</strong>, {{username}}!</p>
-            <form>
-                <input type="text" value="__PENDING__" />
-                <input type="submit" value="Change username" />
-            </form>
-        </script>
-        <script type="x-tmpl-mustache" id="user-list">
-            <div class="user-list">
-                {{#users}}
-                <p class="user-item">
-                    <h1>{{username}}</h1>
-                    <p>{{steamID}}</p>
-                </p>
-                {{/users}}
-            </div>
-        </script>
+        <script src="app/jquery-cookie.js"></script>
+        <script src="app/nuterra.js"></script>
+        <script src="app/profile-box.js"></script>
+        <script src="app/pages/techs.js"></script>
+        <script src="app/pages/account.js"></script>
     </head>
     <body>
+        <p>Profile:</p>
         <div id="profile-box"></div>
+        <p>Techs:</p>
+        <div id="tech-list" />
+        <input type="button" value="eyy imma button"/>
     </body>
 </html>

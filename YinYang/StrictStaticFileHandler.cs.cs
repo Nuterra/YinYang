@@ -33,6 +33,15 @@ namespace YinYang
 				request.Response.StatusCode = 404;
 				return;
 			}
+
+			switch (info.Extension.ToLower())
+			{
+				case ".html": request.Response.ContentType = "text/html; charset=utf-8"; break;
+				case ".js": request.Response.ContentType = "text/javascript"; break;
+				case ".css": request.Response.ContentType = "text/css"; break;
+
+			}
+
 			using (FileStream fs = info.OpenRead())
 			{
 				await fs.CopyToAsync(request.Response.Body);

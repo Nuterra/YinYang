@@ -34,7 +34,7 @@ namespace YinYang
 		{
 			var server = new Server();
 
-			app.Map("/static", ConfigureStaticFiles);
+			app.Map("/app", ConfigureStaticFiles);
 
 			app.UseSession();
 			app.UseCommunity();
@@ -45,6 +45,7 @@ namespace YinYang
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\app" });
 
 			app.Map("/api/account", ConfigureAccountApi);
+			app.Map("/api/techs", ConfigureTechApi);
 
 			app.Run(context => server.HandleClient(context));
 		}
@@ -62,6 +63,10 @@ namespace YinYang
 		private static void ConfigureAccountApi(IAppBuilder app)
 		{
 			app.Run(new AccountCommands().HandleRequestAsync);
+		}
+		private static void ConfigureTechApi(IAppBuilder app)
+		{
+			app.Run(new TechController().HandleRequestAsync);
 		}
 	}
 }

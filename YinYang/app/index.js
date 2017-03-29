@@ -1,20 +1,3 @@
-function importTemplate(name, url, onload){
-    var template = $("<script type='x-tmpl-mustache' id='" + name + "'>");
-    $("head script[type='x-tmpl-mustache']").last().after(template);
-    $.ajax({
-        type: 'GET',
-        url: 'profile-box.html',
-        success: function (data) {
-            template.text(data);
-            if (onload) {
-                onload.call(template[0]);
-            }
-        }
-    });
-}
-
-exit();
-
 $(function () {
     var profileBox = $('#profile-box');
 
