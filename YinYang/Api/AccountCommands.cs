@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Data.Entity;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using YinYang.Community;
 using YinYang.Session;
 using YinYang.Steam;
@@ -16,11 +17,11 @@ namespace YinYang.Api
 {
 	public sealed class AccountCommands : RequestHandler
 	{
-		private Dictionary<HttpMethod, RequestHandlerDelegate> _routing;
+		private Dictionary<HttpMethod, Func<IOwinContext, Task<object>>> _routing;
 
 		public AccountCommands()
 		{
-			_routing = new Dictionary<HttpMethod, RequestHandlerDelegate>();
+			_routing = new Dictionary<HttpMethod, Func<IOwinContext, Task<object>>>();
 			_routing.Add(HttpMethod.Get, Get);
 			_routing.Add(HttpMethod.Put, Put);
 			_routing.Add(HttpMethod.Delete, Delete);
@@ -29,16 +30,23 @@ namespace YinYang.Api
 		public async Task HandleRequestAsync(IOwinContext context)
 		{
 			var method = HttpMethod.Parse(context.Request.Method);
-			RequestHandlerDelegate handler;
+			Func<IOwinContext, Task<object>> handler;
 			if (!_routing.TryGetValue(method, out handler))
 			{
 				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 				return;
 			}
-			await handler(context);
+			var response = await handler(context);
+
+			if (response != null)
+			{
+				var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+				string json = JsonConvert.SerializeObject(response, settings);
+				await context.Response.WriteAsync(json);
+			}
 		}
 
-		private Task Get(IOwinContext context)
+		private Task<object> Get(IOwinContext context)
 		{
 			var path = context.Request.Path.Value.Substring(1);
 
@@ -54,31 +62,25 @@ namespace YinYang.Api
 			}
 		}
 
-		private async Task GetAll(IOwinContext context)
+		private async Task<object> GetAll(IOwinContext context)
 		{
 			var community = context.GetCommunity();
-			var ids = await community.Accounts.Where(acc => (acc.Flags & AccountFlags.Activated) > 0).Select(acc => acc.SteamID.ToString()).ToListAsync();
-			string json = JsonConvert.SerializeObject(ids);
-			await context.Response.WriteAsync(json);
-
+			var accounts = await community.Accounts.Where(acc => (acc.Flags & AccountFlags.Activated) > 0).ToListAsync();
+			return accounts;
 		}
 
-		private async Task GetSpecific(IOwinContext context, long id)
+		private async Task<object> GetSpecific(IOwinContext context, long id)
 		{
 			var community = context.GetCommunity();
 			var account = await community.Accounts.GetBySteamIDAsync(id);
-			if (account != null)
-			{
-				string accountJson = JsonConvert.SerializeObject(account);
-				await context.Response.WriteAsync(accountJson);
-			}
-			else
+			if (account == null)
 			{
 				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			}
+			return account;
 		}
 
-		private async Task Put(IOwinContext context)
+		private async Task<object> Put(IOwinContext context)
 		{
 			// api/account/{id}
 			var session = context.GetSession();
@@ -88,7 +90,7 @@ namespace YinYang.Api
 			if (!IsChangeAuthorized(target, authorizer))
 			{
 				context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-				return;
+				return false;
 			}
 
 			using (StreamReader reader = new StreamReader(context.Request.Body))
@@ -99,9 +101,10 @@ namespace YinYang.Api
 				target.Username = newUsername;
 				await community.SaveChangesAsync();
 			}
+			return true;
 		}
 
-		private async Task Delete(IOwinContext context)
+		private async Task<object> Delete(IOwinContext context)
 		{
 			// api/account/{id}
 			var args = context.Request.Query;
@@ -114,11 +117,12 @@ namespace YinYang.Api
 			if (!IsChangeAuthorized(target, authorizer))
 			{
 				context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-				return;
+				return false;
 			}
 
 			target.Flags &= ~(AccountFlags.Activated);
 			await community.SaveChangesAsync();
+			return true;
 		}
 
 		private static async Task<Account> GetTargetAccount(string apiPath, HttpSession session, CommunityContext community)
