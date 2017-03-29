@@ -42,7 +42,7 @@ namespace YinYang
 			app.Map("/login", ConfigureLogin);
 
 			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
-			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "app" });
+			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\app" });
 
 			app.Map("/api/account", ConfigureAccountApi);
 
@@ -51,7 +51,7 @@ namespace YinYang
 
 		private static void ConfigureStaticFiles(IAppBuilder app)
 		{
-			app.Run(new StaticFileHandler() { RootDirectory = "app" }.HandleRequestAsync);
+			app.Run(new StaticFileHandler() { RootDirectory = @"..\..\app" }.HandleRequestAsync);
 		}
 
 		private static void ConfigureLogin(IAppBuilder app)
