@@ -1,18 +1,34 @@
-﻿window.onload = function () {
-    var steamID = false;
+function importTemplate(name, url, onload){
+    var template = $("<script type='x-tmpl-mustache' id='" + name + "'>");
+    $("head script[type='x-tmpl-mustache']").last().after(template);
+    $.ajax({
+        type: 'GET',
+        url: 'profile-box.html',
+        success: function (data) {
+            template.text(data);
+            if (onload) {
+                onload.call(template[0]);
+            }
+        }
+    });
+}
 
-    steamID = $.cookie('YinYang.SteamID');
+exit();
 
+$(function () {
+    var profileBox = $('#profile-box');
+
+    var steamID = $.cookie('YinYang.SteamID');
     if (steamID) {
         renderProfileInfo(steamID);
     } else {
         renderLoginForm();
     }
-}
+});
 
 function renderProfileInfo(steamID) {
     //Grab the inline template
-    var template = document.getElementById('profile-info').innerHTML;
+    var template = $('#profile-info').html();
 
     //Parse it (optional, only necessary if template is to be used again)
     Mustache.parse(template);
@@ -33,7 +49,7 @@ function renderProfileInfo(steamID) {
     }).done(function (data) {
         console.log(data);
         var account = JSON.parse(data);
-        var is_admin = (account.Flags & 0x04) != 0;
+        var is_admin = (account.Flags & 0x04) !== 0;
         is_admin = true;
         if (is_admin) {
             $(document.body).addClass("is-admin");
@@ -87,16 +103,17 @@ function renderLoginForm() {
 
 function renderUserList(steamIDs, admin_mode) {
     //Grab the inline template
-    var template = document.getElementById('user-list').innerHTML;
+    var userListTemplate = document.getElementById('user-list').innerHTML;
 
     //Parse it (optional, only necessary if template is to be used again)
-    Mustache.parse(template);
+    Mustache.parse(userListTemplate);
 
     //Render the data into the template
-    var rendered = $(Mustache.render(template));
+    var rendered = $(Mustache.render(userListTemplate, steamIDs));
 
     //Add list to the bottom of the page
     $(document.body).find("form").append(rendered);
+    {return;}
     $.each(steamIDs, function (index, steamID) {
         console.log('My array has at position ' + index + ', this steamID: ' + steamID);
         var userTemplate = document.getElementById('user-item').innerHTML;

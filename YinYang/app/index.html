@@ -1,41 +1,36 @@
+<!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8" />
+        <!-- Javascript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.0/mustache.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="static/jquery-cookie.js"></script>
         <script src="static/index.js"></script>
-        <script id="login-form" type="x-tmpl-mustache">
-            <form action="/login">
-                <input type="submit" value="Login with Steam" />
-            </form>
+        <script src="static/profile-box.js"></script>
+        <!-- Templates -->
+        <script type="x-tmpl-mustache" id="login-form">
+            
         </script>
-        <script id="profile-info" type="x-tmpl-mustache">
+        <script type="x-tmpl-mustache" id="profile-info">
             <p>You are logged in :D <strong>{{steamID}}</strong>, {{username}}!</p>
             <form>
                 <input type="text" value="__PENDING__" />
                 <input type="submit" value="Change username" />
             </form>
         </script>
-        <script id="user-list" type="x-tmpl-mustache">
-            <table></table>
-        </script>
-        <script id="user-item" type="x-tmpl-mustache">
-            <tr>
-                <td>{{steamID}}</td>
-                <td class="username">{{username}}</td>
-                <td>
-                    {{#admin_mode}}
-                        <form data-steam-id="{{steamID}}">
-                            <input type="text" class="username" value="{{username}}" />
-                            <input type="submit" value="Change username" />
-                        </form>
-                    {{/admin_mode}}
-                </td>
-            </tr>
+        <script type="x-tmpl-mustache" id="user-list">
+            <div class="user-list">
+                {{#users}}
+                <p class="user-item">
+                    <h1>{{username}}</h1>
+                    <p>{{steamID}}</p>
+                </p>
+                {{/users}}
+            </div>
         </script>
     </head>
     <body>
-        <p>Hello World :D</p>
-        <p id="user">Not logged in</p>
+        <div id="profile-box"></div>
     </body>
 </html>
