@@ -132,11 +132,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app\index.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app\jquery-cookie.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
