@@ -43,7 +43,7 @@ namespace YinYang
 
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\app" });
 
-			app.Map("/api/account", ConfigureAccountApi);
+			app.Map("/api/accounts", ConfigureAccountApi);
 			app.Map("/api/techs", ConfigureTechApi);
 
 			app.Run(context => server.HandleClient(context));

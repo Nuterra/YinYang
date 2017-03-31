@@ -18,7 +18,17 @@
         getAccount: function (steamId, callback) {
             $.ajax({
                 type: 'GET',
-                url: '/api/account/' + steamId,
+                url: '/api/accounts/' + steamId,
+                success: function (data) {
+                    var account = JSON.parse(data);
+                    callback(account);
+                }
+            });
+        },
+        getAccounts: function (skip, take, callback) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/accounts?skip=' + skip + '&take='+ take,
                 success: function (data) {
                     var account = JSON.parse(data);
                     callback(account);

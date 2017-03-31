@@ -48,24 +48,42 @@ namespace YinYang.Api
 
 		private Task<object> Get(IOwinContext context)
 		{
-			var path = context.Request.Path.Value.Substring(1);
-
-			if (path.Equals("all", StringComparison.OrdinalIgnoreCase))
+			if (context.Request.Path.HasValue)
 			{
-				// api/account/all
-				return GetAll(context);
+				// api/accounts/{id}
+				return GetSpecific(context, long.Parse(context.Request.Path.Value.Substring(1)));
 			}
 			else
 			{
-				// api/account/{id}
-				return GetSpecific(context, long.Parse(path));
+				// api/accounts?skip=27&take=50
+				return GetAll(context);
 			}
 		}
 
 		private async Task<object> GetAll(IOwinContext context)
 		{
+			int skip = 0;
+			var skipParam = context.Request.Query.GetValues("skip")?.Single();
+			if (skipParam != null)
+			{
+				skip = int.Parse(skipParam);
+			}
+
+			int take = 20;
+			var takeParam = context.Request.Query.GetValues("take")?.Single();
+			if (takeParam != null)
+			{
+				take = int.Parse(takeParam);
+			}
+
 			var community = context.GetCommunity();
-			var accounts = await community.Accounts.Where(acc => (acc.Flags & AccountFlags.Activated) > 0).ToListAsync();
+			var accounts = await community.Accounts
+				.Where(acc => (acc.Flags & AccountFlags.Activated) > 0)
+				.OrderBy(acc => acc.Username)
+				.Skip(skip)
+				.Take(take)
+				.ToListAsync();
+
 			return accounts;
 		}
 
