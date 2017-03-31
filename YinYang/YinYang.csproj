@@ -121,7 +121,6 @@
     <Compile Include="Server.cs" />
     <Compile Include="Steam\SteamUniverse.cs" />
     <Compile Include="StrictStaticFileHandler.cs.cs" />
-    <Compile Include="WaitHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

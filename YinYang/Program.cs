@@ -41,7 +41,6 @@ namespace YinYang
 
 			app.Map("/login", ConfigureLogin);
 
-			server.AddRoute(new HttpRoute("/wait", HttpMethod.Get), new WaitHandler());
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\app" });
 
 			app.Map("/api/account", ConfigureAccountApi);
