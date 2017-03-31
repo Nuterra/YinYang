@@ -56,11 +56,11 @@
             }
             var hash = "#" + name + "=" + id + ":";
             handler(id);
-            if(!nopush) {
+            if (!nopush) {
                 history.pushState({ name: name, id: id }, name + ": #" + id, hash);
             }
         },
-        setPageTitle: function(text) {
+        setPageTitle: function (text) {
             var hash = window.location.hash.match(/^#([^=]*?)=(\w+)/g);
             hash += ":" + text.replace(/\s/g, '+');
             window.location.hash = hash;
@@ -81,7 +81,7 @@
     return myNuterra;
 }());
 
-window.onpopstate = function(event) {
+window.onpopstate = function (event) {
     if (event.state == null) {
         Nuterra.loadPageFromUrlHash();
     } else {
@@ -89,7 +89,7 @@ window.onpopstate = function(event) {
     }
 };
 
-$(function() { Nuterra.loadPageFromUrlHash(); });
+$(function () { Nuterra.loadPageFromUrlHash(); });
 
 ///#mod=1:my-first-mod
 //<url>#<pagename>=<id>:<userdata>

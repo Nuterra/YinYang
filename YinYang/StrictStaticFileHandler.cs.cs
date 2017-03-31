@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using YinYang.Session;
 
 namespace YinYang
 {
@@ -39,7 +38,6 @@ namespace YinYang
 				case ".html": request.Response.ContentType = "text/html; charset=utf-8"; break;
 				case ".js": request.Response.ContentType = "text/javascript"; break;
 				case ".css": request.Response.ContentType = "text/css"; break;
-
 			}
 
 			using (FileStream fs = info.OpenRead())

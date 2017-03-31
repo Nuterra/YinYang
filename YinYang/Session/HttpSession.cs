@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using YinYang.Community;
 using YinYang.Steam;
 
 namespace YinYang.Session
@@ -41,6 +39,5 @@ namespace YinYang.Session
 
 			Expires += duration;
 		}
-
 	}
 }

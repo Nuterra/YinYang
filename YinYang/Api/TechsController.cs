@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
@@ -70,6 +69,5 @@ namespace YinYang.Api
 			var techs = await community.Techs.Where(tech => tech.ID == id || tech.OwnerID == id).ToListAsync();
 			return techs;
 		}
-
 	}
 }

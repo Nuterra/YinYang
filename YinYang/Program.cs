@@ -63,6 +63,7 @@ namespace YinYang
 		{
 			app.Run(new AccountCommands().HandleRequestAsync);
 		}
+
 		private static void ConfigureTechApi(IAppBuilder app)
 		{
 			app.Run(new TechController().HandleRequestAsync);

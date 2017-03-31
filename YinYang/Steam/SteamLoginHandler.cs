@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
@@ -79,7 +77,6 @@ namespace YinYang.Steam
 			}
 
 			await HandleValidLogin(request, steamID);
-
 		}
 
 		private async Task HandleValidLogin(IOwinContext request, SteamID steamID)

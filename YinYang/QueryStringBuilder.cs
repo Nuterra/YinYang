@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace YinYang
 {
@@ -42,7 +40,7 @@ namespace YinYang
 		/// <summary> Adds a single entry to the collection. </summary>
 		/// <param name="prefix"> The prefix to use when generating the key of the entry. Can be null. </param>
 		/// <param name="instance"> The instance to add.
-		///  
+		///
 		///  - If the instance is a dictionary, the entries determine the key and values.
 		///  - If the instance is a collection, the keys will be the index of the entries, and the value
 		///  will be each item in the collection.

@@ -62,7 +62,6 @@ namespace YinYang.Migrations
 
 			context.Techs.AddOrUpdate(t => t.Title, tech1, tech2, tech3, tech4);
 
-
 			//  You can use the DbSet<T>.AddOrUpdate() helper extension method
 			//  to avoid creating duplicate seed data. E.g.
 			//

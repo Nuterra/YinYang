@@ -48,7 +48,6 @@ namespace YinYang.Steam
 			AccountID = (uint)(steamID64 & 0xFFFFFFFF);
 		}
 
-
 		internal SteamID(SteamUniverse universe, SteamAccountType accountType, SteamInstance instance, uint accountID)
 		{
 			Universe = universe;
@@ -56,7 +55,6 @@ namespace YinYang.Steam
 			Instance = instance;
 			AccountID = accountID;
 		}
-
 
 		public string ToSteamID2()
 		{
@@ -98,12 +96,16 @@ namespace YinYang.Steam
 				case SteamAccountType.Invalid:
 				case SteamAccountType.AnonymousUser:
 					return false;
+
 				case SteamAccountType.Individual:
 					return AccountID != 0 && Instance <= SteamInstance.Web;
+
 				case SteamAccountType.Clan:
 					return AccountID != 0 && Instance == SteamInstance.All;
+
 				case SteamAccountType.GameServer:
 					return AccountID != 0;
+
 				default:
 					return true;
 			}
@@ -113,6 +115,5 @@ namespace YinYang.Steam
 		{
 			return ToSteamID64().ToString();
 		}
-
 	}
 }

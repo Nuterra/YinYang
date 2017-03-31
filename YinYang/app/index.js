@@ -40,7 +40,6 @@ function renderProfileInfo(steamID) {
             $(document.body).removeClass("is-admin");
         }
 
-
         $.ajax({
             url: '/api/account/all',
             type: 'GET',
@@ -51,7 +50,6 @@ function renderProfileInfo(steamID) {
 
         console.log(account);
         $(this).children().first().val(account.Username);
-
 
         $(this).submit(function (event) {
             $.ajax({
@@ -67,7 +65,6 @@ function renderProfileInfo(steamID) {
             event.preventDefault();
         });
     });
-
 }
 
 function renderLoginForm() {
@@ -96,7 +93,7 @@ function renderUserList(steamIDs, admin_mode) {
 
     //Add list to the bottom of the page
     $(document.body).find("form").append(rendered);
-    {return;}
+    { return; }
     $.each(steamIDs, function (index, steamID) {
         console.log('My array has at position ' + index + ', this steamID: ' + steamID);
         var userTemplate = document.getElementById('user-item').innerHTML;
