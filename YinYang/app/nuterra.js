@@ -1,4 +1,4 @@
-﻿window.Nuterra = (function () {
+window.Nuterra = (function () {
     var myNuterra = {
         templates: {},
         loadTemplate: function (name, url, onload) {
@@ -27,6 +27,11 @@
         },
 
         getAccount: function (steamId, callback) {
+            if (!steamId) {
+                console.warn('steamId is undefined!');
+                callback(null);
+                return;
+            }
             $.ajax({
                 type: 'GET',
                 url: '/api/accounts/' + steamId,

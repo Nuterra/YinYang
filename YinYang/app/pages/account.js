@@ -14,12 +14,12 @@ Nuterra.addPage('account', function (id) {
     if (id == null) {
         //My account
         Nuterra.getCurrentAccount(function (account) {
-            var rendered = Mustache.render(accountTemplate, account);
+            var rendered = Mustache.render(accountTemplate, { profile: account });
             $('#main-content').html(rendered);
         });
     } else {
         Nuterra.getAccount(id, function (account) {
-            var rendered = Mustache.render(accountTemplate, account);
+            var rendered = Mustache.render(accountTemplate, { profile: account });
             $('#main-content').html(rendered);
         });
         { return; }

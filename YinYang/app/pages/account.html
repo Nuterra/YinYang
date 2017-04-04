@@ -1,2 +1,9 @@
-﻿<h1>{{username}}</h1>
+﻿{{#profile}}
+<h1>{{username}}</h1>
 <p>{{steamID}}</p>
+{{/profile}}
+{{^profile}}
+<form action="/login">
+    <input type="submit" value="Login with Steam" />
+</form>
+{{/profile}}
