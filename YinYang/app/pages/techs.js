@@ -6,11 +6,14 @@ Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function () {
 
 Nuterra.addPage('tech', function (id) {
     if (id == null) {
+        Nuterra.getTechsForAccount('all', function(techs){
+            var rendered = Mustache.render(techsTemplate, { techs: techs });
+            $('#main-content').html(rendered);
+        });
     } else {
         Nuterra.getTechInfo(id, function (tech) {
-            // <div id="#latest-techs" />
             var rendered = Mustache.render(techsTemplate, { techs: tech });
-            $('#tech-list').html(rendered);
+            $('#main-content').html(rendered);
         });
     }
 });

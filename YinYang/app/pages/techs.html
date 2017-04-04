@@ -1,6 +1,12 @@
+<div class="jumbotron">
+    <h1>List of techs</h1>
+    <p>This is a list of the techs available on Nuterra</p>
+</div>
 {{#techs}}
-<p>#{{id}} -> {{title}}</p>
+<h1>{{title}}</h1>
+<p>{{?description}}</p>
+<p>TechID: <a href="#tech={{id}}:{{title}}">{{id}}</a></p>
 {{/techs}}
 {{^techs}}
-<p>There are no techs :( </p>
+<h1>There are no techs :(</h1>
 {{/techs}}
