@@ -25,6 +25,10 @@
                 }
             });
         },
+        getCurrentAccount: function(callback) {
+            var steamId = $.cookie('YinYang.SteamID');
+            Nuterra.getAccount(steamId, callback);
+        },
         getAccounts: function (skip, take, callback) {
             $.ajax({
                 type: 'GET',
@@ -57,20 +61,49 @@
         },
         pages: {},
         addPage: function (name, handler) {
-            this.pages[name] = handler;
+            this.pages[name] = {
+                name: name,
+                callback: handler,
+                navItems: [],
+            };
         },
-        showPage: function (name, id, nopush) {
-            var handler = this.pages[name];
-            if (!handler) {
-                alert("Unknown handler: '" + name + "' tell a developer!");
+        showPage: function (name, id, prevent_push) {
+            var page = this.pages[name];
+            if (!page) {
+                console.warn("Unknown page: '" + name + "' tell a developer!");
+                return;
             }
+
+            var handler = page.callback;
             var hash = "#" + name + "=" + id + ":";
             handler(id);
-            if (!nopush) {
+
+            $('#navbar li.active').removeClass('active');
+            $(page.navItems).addClass("active");
+
+            if (!prevent_push) {
                 history.pushState({ name: name, id: id }, name + ": #" + id, hash);
             }
         },
-        setPageTitle: function (text) {
+        getPage: function(link){
+            var matches = link.match(/^#([^=]*?)(=(\w+)(:.*)?)?$/);
+            if (matches != null) {
+                var pageName = matches[1];
+                var pageId = matches[3] || null;
+                return this.pages[pageName];
+            } else {
+                return null;
+            }
+        },
+        setPageNavItem: function (name, element) {
+            var page = this.getPage(name);
+            if (page) {
+                page.navItems.push(element);
+            } else {
+                console.warn('Setting nav item for unknown page ', name, element);
+            }
+        },
+        setTitle: function (text) {
             var hash = window.location.hash.match(/^#([^=]*?)=(\w+)/g);
             hash += ":" + text.replace(/\s/g, '+');
             window.location.hash = hash;
@@ -78,13 +111,12 @@
         loadPageFromUrlHash: function () {
             var hash = window.location.hash;
             var matches = hash.match(/^#([^=]*?)(=(\w+)(:.*)?)?$/);
-            console.log(matches);
             if (matches != null) {
                 var pageName = matches[1];
                 var pageId = matches[3] || null;
                 this.showPage(pageName, pageId, true);
             } else {
-                this.showPage('frontpage', null, true);
+                this.showPage('home', null, true);
             }
         },
     };
@@ -99,6 +131,16 @@ window.onpopstate = function (event) {
     }
 };
 
+
+$(function () {
+    $("#navbar li > a[href]").each(function (index, elem) {
+        var linkElem = $(elem);
+        var pageLink = linkElem.attr("href");
+        var listElem = linkElem.parent()[0];
+        Nuterra.setPageNavItem(pageLink, listElem);
+    });
+
+});
 $(function () { Nuterra.loadPageFromUrlHash(); });
 
 ///#mod=1:my-first-mod
