@@ -1,15 +1,26 @@
 ﻿window.Nuterra = (function () {
     var myNuterra = {
+        templates: {},
         loadTemplate: function (name, url, onload) {
+            var template = this.templates[name];
+            if (template) {
+                onload(template.html());
+            } else {
+                this.newTemplate(name, url, onload);
+            }
+        },
+        newTemplate: function(name, url, onload) {
             var template = $("<script type='x-tmpl-mustache' id='" + name + "'>");
             $("head script[type='x-tmpl-mustache']").last().after(template);
+            var templates = this.templates;
             $.ajax({
                 type: 'GET',
                 url: url,
                 success: function (data) {
                     template.text(data);
+                    templates[name] = template;
                     if (onload) {
-                        onload.call(template[0]);
+                        onload(template.html());
                     }
                 }
             });

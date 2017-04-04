@@ -1,5 +1,4 @@
-Nuterra.loadTemplate('tmpl-profile-box', '/app/profile-box.html', function() {
-    var template = $(this).html();
+Nuterra.loadTemplate('tmpl-profile-box', '/app/profile-box.html', function(template) {
     Mustache.parse(template);
 
     var steamId = $.cookie('YinYang.SteamID');

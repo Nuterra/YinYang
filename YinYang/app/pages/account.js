@@ -1,12 +1,12 @@
 var accountTemplate;
-Nuterra.loadTemplate('tmpl-account', '/app/pages/account.html', function () {
-    accountTemplate = $(this).html();
+Nuterra.loadTemplate('tmpl-account', '/app/pages/account.html', function (template) {
+    accountTemplate = template;
     Mustache.parse(accountTemplate);
 });
 
 var techsTemplate;
-Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function () {
-    techsTemplate = $(this).html();
+Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function (template) {
+    techsTemplate = template;
     Mustache.parse(techsTemplate);
 });
 

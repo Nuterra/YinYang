@@ -1,6 +1,5 @@
-﻿Nuterra.addPage('home', function () {
-    Nuterra.loadTemplate("home", "/app/pages/home.html", function () {
-        var template = $(this).html();
+Nuterra.addPage('home', function () {
+    Nuterra.loadTemplate("home", "/app/pages/home.html", function (template) {
         $("#main-content").html(template);
     });
 });

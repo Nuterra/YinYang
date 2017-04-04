@@ -1,6 +1,6 @@
 var techsTemplate;
-Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function () {
-    techsTemplate = $(this).html();
+Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function (template) {
+    techsTemplate = template;
     Mustache.parse(techsTemplate);
 });
 
