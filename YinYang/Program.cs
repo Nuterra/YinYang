@@ -44,7 +44,7 @@ namespace YinYang
 
 			app.Map("/login", ConfigureLogin);
 
-			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\assets" });
+			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = ConfigurationManager.AppSettings["YinYang.AssetDirectory"] });
 
 			app.Map("/api/accounts", ConfigureAccountApi);
 			app.Map("/api/techs", ConfigureTechApi);
@@ -54,7 +54,7 @@ namespace YinYang
 
 		private static void ConfigureStaticFiles(IAppBuilder app)
 		{
-			app.Run(new StaticFileHandler() { RootDirectory = @"..\..\assets" }.HandleRequestAsync);
+			app.Run(new StaticFileHandler() { RootDirectory = ConfigurationManager.AppSettings["YinYang.AssetDirectory"] }.HandleRequestAsync);
 		}
 
 		private static Task RedirectAppRequests(IOwinContext context, Func<Task> continuation)
