@@ -91,14 +91,17 @@ window.Nuterra = (function () {
             }
 
             var handler = page.callback;
-            var hash = "#" + name + "=" + id + ":";
+            var newUrl = "/app/" + name + "/";
+            if (id) {
+                newUrl += id + "/";
+            }
             handler(id);
 
             $('#navbar li.active').removeClass('active');
             $(page.navItems).addClass("active");
 
             if (!prevent_push) {
-                history.pushState({ name: name, id: id }, name + ": #" + id, hash);
+                history.pushState({ name: name, id: id }, name + ": #" + id, newUrl);
             }
         },
         getPage: function(link){
@@ -123,16 +126,22 @@ window.Nuterra = (function () {
             var hash = window.location.pathname.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
             hash += "/" + text.replace(/\s/g, '+');
             window.location.pathname = hash;
+            window.document.title = text;
         },
-        loadPageFromUrlHash: function () {
-            var hash = window.location.pathname;
-            var matches = hash.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
-            if (matches != null) {
-                var pageName = matches[1];
-                var pageId = matches[3] || null;
-                this.showPage(pageName, pageId, true);
+        showPageFromUrl: function (url, prevent_push) {
+            var info = this.analyzeUrl(url);
+            if (info) {
+                this.showPage(info.page, info.data, prevent_push);
             } else {
-                this.showPage('home', null, true);
+                this.showPage('home', null, prevent_push);
+            }
+        },
+        analyzeUrl: function (url) {
+            var matches = url.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
+            if (matches) {
+                return { page: matches[1], data: matches[3] }
+            } else {
+                return null;
             }
         },
     };
@@ -141,7 +150,7 @@ window.Nuterra = (function () {
 
 window.onpopstate = function (event) {
     if (event.state == null) {
-        Nuterra.loadPageFromUrlHash();
+        Nuterra.showPageFromUrl(window.location.pathname, true);
     } else {
         Nuterra.showPage(event.state.name, event.state.id, true);
     }
@@ -155,19 +164,20 @@ $(function () {
         var listElem = linkElem.parent()[0];
         Nuterra.setPageNavItem(pageLink, listElem);
     });
-
 });
-$(function () { Nuterra.loadPageFromUrlHash(); });
+
+$(function () { Nuterra.showPageFromUrl(window.location.pathname, true); });
 
 $.fn.editable.defaults.mode = 'inline';
 
-function test(a) {
-    var matches = a.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
-    if (matches != null) {
-        var pageName = matches[1];
-        var pageId = matches[3] || null;
-        console.log(a + " -> " + pageName + "=" + pageId);
-    } else {
-        console.log(a + " -> no match");
-    }
-}
+$(function () {
+
+    $("#navbar").on("click", "a", function (event) {
+        var elem = event.target;
+        if (elem.host == window.location.host) {
+            event.preventDefault();
+            var link = elem.pathname;
+            Nuterra.showPageFromUrl(link, false);
+        }
+    });
+});
