@@ -105,11 +105,9 @@ window.Nuterra = (function () {
             }
         },
         getPage: function(link){
-            var matches = link.match(/^app\/([^\/]*?)(\/(\w+)(\/.*)?)?$/);
-            if (matches != null) {
-                var pageName = matches[1];
-                var pageId = matches[3] || null;
-                return this.pages[pageName];
+            var info = this.analyzeUrl(link);
+            if (info) {
+                return this.pages[info.page];
             } else {
                 return null;
             }
