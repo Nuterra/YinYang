@@ -1,9 +1,12 @@
-﻿.btn-steam {
-    background-color: #71A031;
-}
-.btn-github{color:#fff;background-color:#444;border-color:rgba(0,0,0,0.2)}.btn-github:focus,.btn-github.focus{color:#fff;background-color:#2b2b2b;border-color:rgba(0,0,0,0.2)}
-.btn-github:hover{color:#fff;background-color:#2b2b2b;border-color:rgba(0,0,0,0.2)}
-.btn-github:active,.btn-github.active,.open>.dropdown-toggle.btn-github{color:#fff;background-color:#2b2b2b;border-color:rgba(0,0,0,0.2)}.btn-github:active:hover,.btn-github.active:hover,.open>.dropdown-toggle.btn-github:hover,.btn-github:active:focus,.btn-github.active:focus,.open>.dropdown-toggle.btn-github:focus,.btn-github:active.focus,.btn-github.active.focus,.open>.dropdown-toggle.btn-github.focus{color:#fff;background-color:#191919;border-color:rgba(0,0,0,0.2)}
-.btn-github:active,.btn-github.active,.open>.dropdown-toggle.btn-github{background-image:none}
-.btn-github.disabled:hover,.btn-github[disabled]:hover,fieldset[disabled] .btn-github:hover,.btn-github.disabled:focus,.btn-github[disabled]:focus,fieldset[disabled] .btn-github:focus,.btn-github.disabled.focus,.btn-github[disabled].focus,fieldset[disabled] .btn-github.focus{background-color:#444;border-color:rgba(0,0,0,0.2)}
-.btn-github .badge{color:#444;background-color:#fff}
+﻿/* Adjusted from github button */
+/* 444 -> 71A031 */
+/* 2b2b2b-> 5F8729 */
+/* 191919-> 4D6E22 */
+.btn-steam{color:#fff;background-color:#71A031;border-color:rgba(0,0,0,0.2)}
+.btn-steam:focus,.btn-steam.focus{color:#fff;background-color:#5F8729;border-color:rgba(0,0,0,0.2)}
+.btn-steam:hover{color:#fff;background-color:#5F8729;border-color:rgba(0,0,0,0.2)}
+.btn-steam:active,.btn-steam.active,.open>.dropdown-toggle.btn-steam{color:#fff;background-color:#5F8729;border-color:rgba(0,0,0,0.2)}
+.btn-steam:active:hover,.btn-steam.active:hover,.open>.dropdown-toggle.btn-steam:hover,.btn-steam:active:focus,.btn-steam.active:focus,.open>.dropdown-toggle.btn-steam:focus,.btn-steam:active.focus,.btn-steam.active.focus,.open>.dropdown-toggle.btn-steam.focus{color:#fff;background-color:#4D6E22;border-color:rgba(0,0,0,0.2)}
+.btn-steam:active,.btn-steam.active,.open>.dropdown-toggle.btn-steam{background-image:none}
+.btn-steam.disabled:hover,.btn-steam[disabled]:hover,fieldset[disabled] .btn-steam:hover,.btn-steam.disabled:focus,.btn-steam[disabled]:focus,fieldset[disabled] .btn-steam:focus,.btn-steam.disabled.focus,.btn-steam[disabled].focus,fieldset[disabled] .btn-steam.focus{background-color:#71A031;border-color:rgba(0,0,0,0.2)}
+.btn-steam .badge{color:#71A031;background-color:#fff}
