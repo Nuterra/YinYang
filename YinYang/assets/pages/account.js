@@ -17,6 +17,7 @@ Nuterra.addPage('account', function (id) {
             var rendered = Mustache.render(accountTemplate, { profile: account });
             $('#main-content').html(rendered);
             $('.btn').button();
+            $('#main-content .editable').editable();
         });
     } else {
         Nuterra.getAccount(id, function (account) {
