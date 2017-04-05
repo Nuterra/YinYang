@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Owin;
 using Microsoft.Owin.Hosting;
 using Owin;
 using YinYang.Api;
@@ -34,14 +36,15 @@ namespace YinYang
 		{
 			var server = new Server();
 
-			app.Map("/app", ConfigureStaticFiles);
+			app.Use(RedirectAppRequests);
+			app.Map("/assets", ConfigureStaticFiles);
 
 			app.UseSession();
 			app.UseCommunity();
 
 			app.Map("/login", ConfigureLogin);
 
-			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\app" });
+			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = @"..\..\assets" });
 
 			app.Map("/api/accounts", ConfigureAccountApi);
 			app.Map("/api/techs", ConfigureTechApi);
@@ -51,7 +54,16 @@ namespace YinYang
 
 		private static void ConfigureStaticFiles(IAppBuilder app)
 		{
-			app.Run(new StaticFileHandler() { RootDirectory = @"..\..\app" }.HandleRequestAsync);
+			app.Run(new StaticFileHandler() { RootDirectory = @"..\..\assets" }.HandleRequestAsync);
+		}
+
+		private static Task RedirectAppRequests(IOwinContext context, Func<Task> continuation)
+		{
+			if (context.Request.Path.StartsWithSegments(new PathString("/app")))
+			{
+				context.Request.Path = new PathString("/assets/index.html");
+			}
+			return continuation.Invoke();
 		}
 
 		private static void ConfigureLogin(IAppBuilder app)

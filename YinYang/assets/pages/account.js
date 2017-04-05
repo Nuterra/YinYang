@@ -1,11 +1,11 @@
 var accountTemplate;
-Nuterra.loadTemplate('tmpl-account', '/app/pages/account.html', function (template) {
+Nuterra.loadTemplate('tmpl-account', '/assets/pages/account.html', function (template) {
     accountTemplate = template;
     Mustache.parse(accountTemplate);
 });
 
 var techsTemplate;
-Nuterra.loadTemplate('tmpl-tech-list', '/app/pages/techs.html', function (template) {
+Nuterra.loadTemplate('tmpl-tech-list', '/assets/pages/techs.html', function (template) {
     techsTemplate = template;
     Mustache.parse(techsTemplate);
 });
@@ -16,6 +16,7 @@ Nuterra.addPage('account', function (id) {
         Nuterra.getCurrentAccount(function (account) {
             var rendered = Mustache.render(accountTemplate, { profile: account });
             $('#main-content').html(rendered);
+            $('.btn').button();
         });
     } else {
         Nuterra.getAccount(id, function (account) {

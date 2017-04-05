@@ -16,7 +16,7 @@ namespace YinYang.Session
 			Created = DateTime.Now;
 			Expires = Created;
 			ExtendLifetime(timeValid);
-			SteamID = new SteamID(76561198023393043);
+			//SteamID = new SteamID(76561198023393043);
 #warning REMOVE FROM PRODUCTION
 		}
 

@@ -107,6 +107,7 @@
       <DependentUpon>201703272153136_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="RedirectHandler.cs" />
     <Compile Include="Session\HttpSession.cs" />
     <Compile Include="Session\SessionMiddleware.cs" />
     <Compile Include="Session\SessionExtensions.cs" />
@@ -127,12 +128,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app\index.html">
+    <None Include="assets\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app\jquery-cookie.js">
+    <None Include="assets\jquery-cookie.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -145,25 +146,32 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app\pages\account.html">
+    <None Include="assets\pages\account.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="app\pages\account.js">
+    <None Include="assets\pages\account.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="app\pages\techs.html">
+    <None Include="assets\pages\techs.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="app\pages\techs.js">
+    <None Include="assets\pages\techs.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="app\nuterra.js">
+    <None Include="assets\nuterra.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\pages\home.html" />
-    <Content Include="app\pages\home.js" />
+    <None Include="assets\pages\home.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\pages\home.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\style\steam-button.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

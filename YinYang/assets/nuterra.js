@@ -102,7 +102,7 @@ window.Nuterra = (function () {
             }
         },
         getPage: function(link){
-            var matches = link.match(/^#([^=]*?)(=(\w+)(:.*)?)?$/);
+            var matches = link.match(/^app\/([^\/]*?)(\/(\w+)(\/.*)?)?$/);
             if (matches != null) {
                 var pageName = matches[1];
                 var pageId = matches[3] || null;
@@ -120,13 +120,13 @@ window.Nuterra = (function () {
             }
         },
         setTitle: function (text) {
-            var hash = window.location.hash.match(/^#([^=]*?)=(\w+)/g);
-            hash += ":" + text.replace(/\s/g, '+');
-            window.location.hash = hash;
+            var hash = window.location.pathname.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
+            hash += "/" + text.replace(/\s/g, '+');
+            window.location.pathname = hash;
         },
         loadPageFromUrlHash: function () {
-            var hash = window.location.hash;
-            var matches = hash.match(/^#([^=]*?)(=(\w+)(:.*)?)?$/);
+            var hash = window.location.pathname;
+            var matches = hash.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
             if (matches != null) {
                 var pageName = matches[1];
                 var pageId = matches[3] || null;
@@ -159,18 +159,15 @@ $(function () {
 });
 $(function () { Nuterra.loadPageFromUrlHash(); });
 
-///#mod=1:my-first-mod
-//<url>#<pagename>=<id>:<userdata>
+$.fn.editable.defaults.mode = 'inline';
 
-/*
-window.onpopstate = function (event) {
-    alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-};
-
-history.pushState({ page: 1 }, "title 1", "?page=1");
-history.pushState({ page: 2 }, "title 2", "?page=2");
-history.replaceState({ page: 3 }, "title 3", "?page=3");
-history.back(); // alerts "location: http://example.com/example.html?page=1, state: {"page":1}"
-history.back(); // alerts "location: http://example.com/example.html, state: null
-history.go(2);  // alerts "location: http://example.com/example.html?page=3, state: {"page":3}
-*/
+function test(a) {
+    var matches = a.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
+    if (matches != null) {
+        var pageName = matches[1];
+        var pageId = matches[3] || null;
+        console.log(a + " -> " + pageName + "=" + pageId);
+    } else {
+        console.log(a + " -> no match");
+    }
+}
