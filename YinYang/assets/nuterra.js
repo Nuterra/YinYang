@@ -78,7 +78,16 @@ window.Nuterra = (function () {
     var myNuterra = {
         templates: {},
         getTemplateText: function (name) {
-            return this.templates[name].text;
+            var template = this.templates[name];
+            if (!template) {
+                console.warn("Missing template: '" + name + "'");
+                return null;
+            }
+            if (!template.downloaded) {
+                console.warn("Template not yet downloaded: '" + name + "'");
+                return null;
+            }
+            return template.text;
         },
         addTemplate: function (name, url) {
             if (!this.templates.hasOwnProperty(name)) {
