@@ -1,31 +1,88 @@
 window.Nuterra = (function () {
+    function Template(url, partialCallback) {
+        this.callbacks = [];
+        this.dependsOn = [];
+        this.pendingDependencies = [];
+        this.downloaded = false;
+        this.text = null;
+        this.partialCallback = partialCallback;
+        this.url = url;
+        this.download();
+    }
+    Template.prototype.use = function (callback) {
+        if (this.downloaded) {
+            callback(this.text);
+        } else {
+            this.callbacks.push(callback);
+        }
+    }
+    Template.prototype.render = function (data, callback) {
+        var self = this;
+        this.use(function (text) {
+            var rendered = Mustache.render(text, data, self.partialCallback);
+            callback(rendered);
+        });
+    }
+    Template.prototype.download = function () {
+        if (this.downloaded) {
+            return;
+        }
+        var self = this;
+        $.ajax({
+            type: 'GET',
+            url: this.url,
+            success: function (data) {
+                self.onDownloaded(data);
+            }
+        });
+    }
+    Template.prototype.onDownloaded = function (text) {
+        this.text = text;
+        this.downloaded = true;
+        for (var i = 0; i < this.callbacks.length; i++) {
+            var callback = this.callbacks[i];
+            callback(text);
+        }
+        this.callbacks.length = 0;
+    }
+    Template.prototype.addDependency = function (otherTemplate) {
+        for (var i = 0; i < this.pendingDependencies.length; i++) {
+            if (this.dependsOn[i] == otherTemplate) {
+                return;
+            }
+        }
+        this.dependsOn.push(otherTemplate);
+        if (!otherTemplate.downloaded) {
+            this.pendingDependencies.push(otherTemplate);
+            var self = this;
+            otherTemplate.use(function () {
+                self.dependencyReady(otherTemplate);
+            });
+        }
+    }
+    Template.prototype.dependencyReady = function (otherTemplate) {
+        for (var i = 0; i < this.pendingDependencies.length; i++) {
+            var dependency = this.pendingDependencies[i];
+            if (dependency == otherTemplate) {
+                this.pendingDependencies.splice(i, 1);
+                return;
+            }
+        }
+    }
+
     var myNuterra = {
         templates: {},
-        loadTemplate: function (name, url, onload) {
-            var template = this.templates[name];
-            if (template) {
-                onload(template.html());
-            } else {
-                this.newTemplate(name, url, onload);
+        getTemplateText: function (name) {
+            return this.templates[name].text;
+        },
+        addTemplate: function (name, url) {
+            if (!this.templates.hasOwnProperty(name)) {
+                this.templates[name] = new Template(url, this.getTemplateText.bind(this));
             }
+            var template = this.templates[name];
+            console.assert(template.url == url);
+            return template;
         },
-        newTemplate: function(name, url, onload) {
-            var template = $("<script type='x-tmpl-mustache' id='" + name + "'>");
-            $("head script[type='x-tmpl-mustache']").last().after(template);
-            var templates = this.templates;
-            $.ajax({
-                type: 'GET',
-                url: url,
-                success: function (data) {
-                    template.text(data);
-                    templates[name] = template;
-                    if (onload) {
-                        onload(template.html());
-                    }
-                }
-            });
-        },
-
         getAccount: function (steamId, callback) {
             if (!steamId) {
                 console.warn('steamId is undefined!');
@@ -153,29 +210,3 @@ window.onpopstate = function (event) {
         Nuterra.showPage(event.state.name, event.state.id, true);
     }
 };
-
-
-$(function () {
-    $("#navbar li > a[href]").each(function (index, elem) {
-        var linkElem = $(elem);
-        var pageLink = linkElem.attr("href");
-        var listElem = linkElem.parent()[0];
-        Nuterra.setPageNavItem(pageLink, listElem);
-    });
-});
-
-$(function () { Nuterra.showPageFromUrl(window.location.pathname, true); });
-
-$.fn.editable.defaults.mode = 'inline';
-
-$(function () {
-
-    $("#navbar").on("click", "a", function (event) {
-        var elem = event.target;
-        if (elem.host == window.location.host) {
-            event.preventDefault();
-            var link = elem.pathname;
-            Nuterra.showPageFromUrl(link, false);
-        }
-    });
-});

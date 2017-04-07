@@ -1,11 +1,51 @@
 ﻿.downloads .jumbotron {
-    text-align:center;
+		text-align:center;
 }
 .downloads .jumbotron .bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 18px;
-    background-color: rgba(0,0,0,0.2);
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 18px;
+		background-color: rgba(0,0,0,0.2);
+}
+
+loader {
+	font-family:sans-serif;
+	width:116px;
+	height:116px;
+	line-height:116px;
+	text-align:center;
+	color:#A8AAAD;
+	border-radius:512%;
+	border:1px solid #C9CBCC;
+	position: absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+}
+loader:before {
+	content: 'LOADING';
+}
+loader:after {
+	content:'';
+	width:114px;
+	height:114px;
+	border-radius:512%;
+	border:3px solid transparent;
+	border-top:3px solid #4090DB;
+	position: absolute;
+	top: -3px;
+	left: -3px;
+	animation: rotate 2s linear infinite;
+	box-sizing: content-box;
+}
+
+@keyframes rotate {
+	0% {
+		transform:rotate(0deg);
+	}
+	100% {
+		transform:rotate(360deg);
+	}
 }

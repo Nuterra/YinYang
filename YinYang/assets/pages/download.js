@@ -1,11 +1,10 @@
-﻿var downloadTemplate;
-Nuterra.loadTemplate('tmpl-download', '/assets/pages/download.html', function (template) {
-    downloadTemplate = template;
-    Mustache.parse(downloadTemplate);
-});
+﻿(function () {
+    var template = Nuterra.addTemplate('download', '/assets/pages/download.mustache');
 
-Nuterra.addPage('download', function (id) {
-    var rendered = Mustache.render(downloadTemplate, {});
-    $('#main-content').html(rendered);
-    $('#main-content .btn').button();
-});
+    Nuterra.addPage('download', function (id) {
+        template.render({}, function (rendered) {
+            $('#main-content').html(rendered);
+            $('#main-content .btn').button();
+        });
+    });
+})();

@@ -1,5 +1,10 @@
-Nuterra.addPage('home', function () {
-    Nuterra.loadTemplate("home", "/assets/pages/home.html", function (template) {
-        $("#main-content").html(template);
+(function () { 
+    var template = Nuterra.addTemplate('home', '/assets/pages/home.mustache');
+
+    Nuterra.addPage('home', function (id) {
+        template.render({}, function (rendered) {
+            $("#main-content").html(rendered);
+            $('#main-content .btn').button();
+        });
     });
-});
+})();
