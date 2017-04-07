@@ -73,7 +73,7 @@ namespace YinYang
 
 		private static void ConfigureAccountApi(IAppBuilder app)
 		{
-			app.Run(new AccountCommands().HandleRequestAsync);
+			app.Run(new AccountController().HandleRequestAsync);
 		}
 
 		private static void ConfigureTechApi(IAppBuilder app)

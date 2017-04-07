@@ -15,11 +15,11 @@ using YinYang.Steam;
 
 namespace YinYang.Api
 {
-	public sealed class AccountCommands : RequestHandler
+	public sealed class AccountController : RequestHandler
 	{
 		private Dictionary<HttpMethod, Func<IOwinContext, Task<object>>> _routing;
 
-		public AccountCommands()
+		public AccountController()
 		{
 			_routing = new Dictionary<HttpMethod, Func<IOwinContext, Task<object>>>();
 			_routing.Add(HttpMethod.Get, Get);

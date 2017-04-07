@@ -90,7 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\AccountCommands.cs" />
+    <Compile Include="Api\AccountController.cs" />
     <Compile Include="Api\TechsController.cs" />
     <Compile Include="Authentication\LightOpenID.cs" />
     <Compile Include="Community\Account.cs" />
