@@ -10,7 +10,7 @@ window.Nuterra = (function () {
         this.download();
     }
     Template.prototype.use = function (callback) {
-        if (this.downloaded) {
+        if (this.downloaded && this.pendingDependencies.length == 0) {
             callback(this.text);
         } else {
             this.callbacks.push(callback);
@@ -32,16 +32,18 @@ window.Nuterra = (function () {
             type: 'GET',
             url: this.url,
             success: function (data) {
-                self.onDownloaded(data);
+                self.text = data;
+                self.downloaded = true;
+                if (self.pendingDependencies.length == 0) {
+                    self.onDownloaded();
+                }
             }
         });
     }
-    Template.prototype.onDownloaded = function (text) {
-        this.text = text;
-        this.downloaded = true;
+    Template.prototype.onDownloaded = function () {
         for (var i = 0; i < this.callbacks.length; i++) {
             var callback = this.callbacks[i];
-            callback(text);
+            callback(this.text);
         }
         this.callbacks.length = 0;
     }
@@ -65,8 +67,11 @@ window.Nuterra = (function () {
             var dependency = this.pendingDependencies[i];
             if (dependency == otherTemplate) {
                 this.pendingDependencies.splice(i, 1);
-                return;
+                break;
             }
+        }
+        if (this.downloaded) {
+            this.onDownloaded(this.text);
         }
     }
 
