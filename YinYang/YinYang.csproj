@@ -192,6 +192,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\features.txt" />
     <None Include="assets\mustache.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
