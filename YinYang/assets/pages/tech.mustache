@@ -1,3 +1,19 @@
-﻿<h1>{{title}}</h1>
-<p>{{?description}}</p>
-<p>TechID: <a href="/app/tehc/{{id}}/{{title}}">{{id}}</a></p>
+﻿<div class="col-xs-12 col-sm-6 col-md-4">
+    <div class="tech tech-item">
+        <a class="tech-thumbnail" href="/app/tech/{{id}}/{{title}}">
+            <img src="{{imageUrl}}" alt="Thumbnail" style="width:100%">
+        </a>
+        <div class="tech-info">
+            <p class="tech-title">{{title}}</p>
+            <a class="tech-creator" href="/app/account/{{ownerID}}">{{creator}}</a>
+            <p class="tech-stats">
+                <a class="downloads" href="#downloads">
+                    <span class="glyphicon glyphicon-download-alt" /> {{downloads}}
+                </a>
+                <a class="views" href="#views">
+                    <span class="glyphicon glyphicon-eye-open" /> {{views}}
+                </a>
+            </p>
+        </div>
+    </div>
+</div>

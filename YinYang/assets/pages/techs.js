@@ -5,15 +5,19 @@
     techListTemplate.addDependency(techTemplate);
 
     Nuterra.addPage('tech', function (id) {
-        var showTechs = function (techs) {
-            techListTemplate.render({ techs: techs }, function (rendered) {
-                $('#main-content').html(rendered);
-            });
-        };
         if (id == null) {
-            Nuterra.getTechsForAccount('all', showTechs);
+            Nuterra.getTechsForAccount('all', function (techs) {
+                techListTemplate.render({ techs: techs }, function (rendered) {
+                    $('#main-content').html(rendered);
+                    $('#main-content > .tech').chunk(3).wrapAll('<div class="row"></div>');
+                });
+            });
         } else {
-            Nuterra.getTechInfo(id, showTechs);
+            Nuterra.getTechInfo(id, function (techs) {
+                techTemplate.render(techs[0], function (rendered) {
+                    $('#main-content').html(rendered);
+                });
+            });
         }
     });
 })();

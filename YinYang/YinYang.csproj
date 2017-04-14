@@ -106,6 +106,14 @@
     <Compile Include="Migrations\201703272153136_Initial.Designer.cs">
       <DependentUpon>201703272153136_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704121507500_TechImageAndData.cs" />
+    <Compile Include="Migrations\201704121507500_TechImageAndData.Designer.cs">
+      <DependentUpon>201704121507500_TechImageAndData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704131527203_OwnersAndSubscribers.cs" />
+    <Compile Include="Migrations\201704131527203_OwnersAndSubscribers.Designer.cs">
+      <DependentUpon>201704131527203_OwnersAndSubscribers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="RedirectHandler.cs" />
     <Compile Include="Session\HttpSession.cs" />
@@ -146,6 +154,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201703272153136_Initial.resx">
       <DependentUpon>201703272153136_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704121507500_TechImageAndData.resx">
+      <DependentUpon>201704121507500_TechImageAndData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704131527203_OwnersAndSubscribers.resx">
+      <DependentUpon>201704131527203_OwnersAndSubscribers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +207,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\features.txt" />
+    <None Include="assets\pages\tech.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\jquery-chunks.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\mustache.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

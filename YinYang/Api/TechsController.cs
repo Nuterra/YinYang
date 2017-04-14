@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using YinYang.Community;
 
@@ -14,7 +16,7 @@ namespace YinYang.Api
 	public sealed class TechController : RequestHandler
 	{
 		private Dictionary<HttpMethod, Func<IOwinContext, Task<object>>> _routing;
-
+		private JsonSerializer _serializer = JsonSerializer.Create(new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 		public TechController()
 		{
 			_routing = new Dictionary<HttpMethod, Func<IOwinContext, Task<object>>>();
@@ -34,9 +36,10 @@ namespace YinYang.Api
 
 			if (response != null)
 			{
-				var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-				string json = JsonConvert.SerializeObject(response, settings);
-				await context.Response.WriteAsync(json);
+				using (StreamWriter writer = new StreamWriter(context.Response.Body))
+				{
+					_serializer.Serialize(writer, response);
+				}
 			}
 		}
 
@@ -60,14 +63,29 @@ namespace YinYang.Api
 		{
 			var community = context.GetCommunity();
 			var techs = await community.Techs.ToListAsync();
-			return techs;
+
+			return techs.Select(TechToJson);
 		}
 
 		private async Task<object> GetSpecific(IOwinContext context, long id)
 		{
 			var community = context.GetCommunity();
-			var techs = await community.Techs.Where(tech => tech.ID == id || tech.OwnerID == id).ToListAsync();
-			return techs;
+			var techs = community.Techs.Where(tech => tech.ID == id || tech.OwnerID == id);
+			var results = techs.Select(t => new
+			{
+				Creator = t.Owner.Username,
+				CreatorID = t.OwnerID,
+				Title = t.Title,
+				ImageUrl = t.ImageUrl,
+			});
+			return await results.ToListAsync();
+		}
+
+		private object TechToJson(TechUpload tech)
+		{
+			var json = JObject.FromObject(tech, _serializer);
+			json.Add("creator", tech.Owner.Username);
+			return json;
 		}
 	}
 }

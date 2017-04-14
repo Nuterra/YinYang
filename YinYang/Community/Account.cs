@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
@@ -21,6 +22,18 @@ namespace YinYang.Community
 
 		[DataMember]
 		public AccountFlags Flags { get; set; }
+
+		[InverseProperty("Subscribers")]
+		public virtual ICollection<TechUpload> SubscribedTechs { get; set; }
+
+		[InverseProperty("Owner")]
+		public virtual ICollection<TechUpload> UploadedTechs { get; set; }
+
+		public Account()
+		{
+			SubscribedTechs = new HashSet<TechUpload>();
+			UploadedTechs = new HashSet<TechUpload>();
+		}
 	}
 
 	public class LongToStringConverter : JsonConverter

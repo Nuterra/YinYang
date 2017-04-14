@@ -39,28 +39,44 @@ namespace YinYang.Migrations
 			{
 				ID = 1,
 				OwnerID = maritaria.SteamID,
-				Title = "MyFirstTech"
+				Title = "MyFirstTech",
+				ImageUrl = "http://i.imgur.com/M6aJxUX.png",
+				TechData = "this is a 1 tech",
 			};
 			TechUpload tech2 = new TechUpload
 			{
 				ID = 2,
 				OwnerID = maritaria.SteamID,
-				Title = "My other tech"
+				Title = "My other tech",
+				ImageUrl = "http://i.imgur.com/jGONnH2.png",
+				TechData = "this is a 2 tech",
 			};
 			TechUpload tech3 = new TechUpload
 			{
 				ID = 3,
 				OwnerID = testAccount.SteamID,
-				Title = "I made a thing"
+				Title = "I made a thing",
+				ImageUrl = "http://i.imgur.com/xgCE4Uj.png",
+				TechData = "this is a 3 tech",
 			};
 			TechUpload tech4 = new TechUpload
 			{
 				ID = 4,
 				OwnerID = testAccount.SteamID,
-				Title = "UNBELIEVABLE SUPER MEGA TECH OMG"
+				Title = "UNBELIEVABLE SUPER MEGA TECH OMGeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				ImageUrl = "http://i.imgur.com/qBcJZbH.png",
+				TechData = "this is a 4 techeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
 			};
 
-			context.Techs.AddOrUpdate(t => t.Title, tech1, tech2, tech3, tech4);
+			tech1.Subscribers.Add(maritaria);
+			tech2.Subscribers.Add(maritaria);
+			tech3.Subscribers.Add(maritaria);
+
+			tech2.Subscribers.Add(testAccount);
+			tech3.Subscribers.Add(testAccount);
+			tech4.Subscribers.Add(testAccount);
+
+			context.Techs.AddOrUpdate(t => t.ID, tech1, tech2, tech3, tech4);
 
 			//  You can use the DbSet<T>.AddOrUpdate() helper extension method
 			//  to avoid creating duplicate seed data. E.g.

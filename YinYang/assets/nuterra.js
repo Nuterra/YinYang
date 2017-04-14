@@ -208,7 +208,7 @@ window.Nuterra = (function () {
         analyzeUrl: function (url) {
             var matches = url.match(/^\/app\/([^\/]*?)((\/(\w+))?(\/.*)?)?$/);
             if (matches) {
-                return { page: matches[1], data: matches[3] }
+                return { page: matches[1], data: matches[4] }
             } else {
                 return null;
             }
