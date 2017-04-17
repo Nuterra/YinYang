@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Imgur.API.Authentication.Impl;
+using Imgur.API.Endpoints.Impl;
+using Imgur.API.Models;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -56,14 +60,24 @@ namespace YinYang.Api
 
 			string title = (string)titleValue;
 			FileUpload file = (FileUpload)fileValue;
-			string finalPath = Path.Combine("\\images", file.FileName);
-			Directory.CreateDirectory("images/images");
-			File.WriteAllBytes("images/" + finalPath, file.Contents);
+
+			if (ConfigurationManager.AppSettings["Imgur.ClientID"] == null)
+			{
+				throw new InvalidOperationException("Imgur.API not configured");
+			}
+
+			var client = new ImgurClient(ConfigurationManager.AppSettings["Imgur.ClientID"], ConfigurationManager.AppSettings["Imgur.ClientSecret"]);
+			var endpoint = new ImageEndpoint(client);
+			IImage image;
+			using (var fs = new MemoryStream(file.Contents))
+			{
+				image = await endpoint.UploadImageStreamAsync(fs);
+			}
 
 			Tech newTech = community.Techs.Create();
 			newTech.Owner = user;
 			newTech.Title = title;
-			newTech.ImageUrl = finalPath.Replace('\\', '/');
+			newTech.ImageUrl = image.Link;
 			community.Techs.Add(newTech);
 			await community.SaveChangesAsync();
 
