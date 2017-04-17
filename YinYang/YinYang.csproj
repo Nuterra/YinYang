@@ -108,9 +108,9 @@
     <Compile Include="HandlerRoute.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Middleware.cs" />
-    <Compile Include="Migrations\201704171245540_init.cs" />
-    <Compile Include="Migrations\201704171245540_init.Designer.cs">
-      <DependentUpon>201704171245540_init.cs</DependentUpon>
+    <Compile Include="Migrations\201704172105235_Init.cs" />
+    <Compile Include="Migrations\201704172105235_Init.Designer.cs">
+      <DependentUpon>201704172105235_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="RedirectHandler.cs" />
@@ -197,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\features.txt" />
+    <Content Include="Migrations\Migrate_Init.sql" />
     <None Include="assets\pages\tech-create.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -214,8 +215,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201704171245540_init.resx">
-      <DependentUpon>201704171245540_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201704172105235_Init.resx">
+      <DependentUpon>201704172105235_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
