@@ -106,15 +106,15 @@ window.Nuterra = (function () {
             $.ajax({
                 type: 'GET',
                 url: '/api/accounts/' + steamId,
-                success: function (data) {
-                    var account = JSON.parse(data);
-                    callback(account);
-                }
+            }).done(function (data) {
+                var account = JSON.parse(data);
+                callback(account);
+            }).fail(function (xhr, statusText) {
+                callback(null);
             });
         },
         getCurrentAccount: function(callback) {
-            var steamId = $.cookie('YinYang.SteamID');
-            Nuterra.getAccount(steamId, callback);
+            Nuterra.getAccount("me", callback);
         },
         getAccounts: function (skip, take, callback) {
             $.ajax({
@@ -140,10 +140,11 @@ window.Nuterra = (function () {
             $.ajax({
                 type: 'GET',
                 url: '/api/techs/' + techId,
-                success: function (data) {
-                    var tech = JSON.parse(data);
-                    callback(tech);
-                }
+            }).done(function (data) {
+                var tech = JSON.parse(data);
+                callback(tech);
+            }).fail(function (xhr, statusText) {
+                callback(null);
             });
         },
         pages: {},

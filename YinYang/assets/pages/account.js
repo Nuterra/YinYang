@@ -10,7 +10,7 @@
             });
         }
         if (id == null) {
-            Nuterra.getCurrentAccount(showAccount);
+            Nuterra.getCurrentAccount(showAccount, { redownload: true });
         } else {
             Nuterra.getAccount(id, showAccount);
         }

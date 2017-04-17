@@ -4,7 +4,7 @@
 
     techListTemplate.addDependency(techTemplate);
 
-    Nuterra.addPage('tech', function (id) {
+    Nuterra.addPage('techs', function (id) {
         if (id == null) {
             Nuterra.getTechsForAccount('all', function (techs) {
                 techListTemplate.render({ techs: techs }, function (rendered) {

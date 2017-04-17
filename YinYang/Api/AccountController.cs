@@ -18,6 +18,7 @@ namespace YinYang.Api
 	public sealed class AccountController : RequestHandler
 	{
 		private Dictionary<HttpMethod, Func<IOwinContext, Task<object>>> _routing;
+		private static readonly object AccountNotFound = new { Error = "Account not found" };
 
 		public AccountController()
 		{
@@ -46,17 +47,33 @@ namespace YinYang.Api
 			}
 		}
 
-		private Task<object> Get(IOwinContext context)
+		private async Task<object> Get(IOwinContext context)
 		{
 			if (context.Request.Path.HasValue)
 			{
 				// api/accounts/{id}
-				return GetSpecific(context, long.Parse(context.Request.Path.Value.Substring(1)));
+				// api/accounts/me
+				string id = context.Request.Path.Value.Substring(1);
+				object response;
+				if (id.Equals("me", StringComparison.OrdinalIgnoreCase))
+				{
+					response = await GetCurrentAccount(context);
+				}
+				else
+				{
+					response = await GetSpecific(context, long.Parse(id));
+				}
+				if (response == null)
+				{
+					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+					return AccountNotFound;
+				}
+				return response;
 			}
 			else
 			{
 				// api/accounts?skip=27&take=50
-				return GetAll(context);
+				return await GetAll(context);
 			}
 		}
 
@@ -87,14 +104,20 @@ namespace YinYang.Api
 			return accounts;
 		}
 
+		private async Task<object> GetCurrentAccount(IOwinContext context)
+		{
+			var session = context.GetSession();
+			if (session.SteamID == null)
+			{
+				return null;
+			}
+			return await GetSpecific(context, session.SteamID.ToSteamID64());
+		}
+
 		private async Task<object> GetSpecific(IOwinContext context, long id)
 		{
 			var community = context.GetCommunity();
 			var account = await community.Accounts.GetBySteamIDAsync(id);
-			if (account == null)
-			{
-				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			}
 			return account;
 		}
 

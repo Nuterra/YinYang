@@ -33,33 +33,41 @@ namespace YinYang.Api
 			{
 				return "error: not multipart form content type";
 			}
-			FormValue titleValue;
-			FormValue fileValue;
-			var form = await MultipartFormParser.ParseMultipartForm(contentType, context.Request.Body);
-			if (!form.TryGetValue("title", out titleValue))
+			object titleValue;
+			object fileValue;
+			var form = await MultipartFormParserasdf.ParseMultipartForm(contentType, context.Request.Body);
+			if (!form.TryGetValue("title", out titleValue) || !(titleValue is string))
 			{
 				return "error: missing title";
 			}
-			if (!form.TryGetValue("file", out fileValue))
+			if (!form.TryGetValue("file", out fileValue) || !(fileValue is FileUpload))
 			{
 				return "error: missing file";
 			}
 
-			string title = titleValue.StringValue;
-			FileUpload file = fileValue.FilesValue.Single();
-			string finalPath = Path.Combine("images", file.FileName);
-			Directory.CreateDirectory("images");
-			File.WriteAllBytes(finalPath, file.Contents);
+			var session = context.GetSession();
+			var community = context.GetCommunity();
+			Account user = await community.Accounts.GetBySessionAsync(session);
 
-			Tech newTech = context.GetCommunity().Techs.Create();
-			newTech.OwnerID = context.GetSession().SteamID.ToSteamID64();
+			if (user == null)
+			{
+				throw new InvalidOperationException("not logged in");
+			}
+
+			string title = (string)titleValue;
+			FileUpload file = (FileUpload)fileValue;
+			string finalPath = Path.Combine("\\images", file.FileName);
+			Directory.CreateDirectory("images/images");
+			File.WriteAllBytes("images/" + finalPath, file.Contents);
+
+			Tech newTech = community.Techs.Create();
+			newTech.Owner = user;
 			newTech.Title = title;
-			newTech.ImageUrl = "/images/" + finalPath.Replace('\\', '/');
-			context.GetCommunity().Techs.Add(newTech);
-			await context.GetCommunity().SaveChangesAsync();
+			newTech.ImageUrl = finalPath.Replace('\\', '/');
+			community.Techs.Add(newTech);
+			await community.SaveChangesAsync();
 
-			return null;
-
+			return newTech.ID;
 		}
 
 		public async Task HandleRequestAsync(IOwinContext context)
@@ -101,60 +109,55 @@ namespace YinYang.Api
 		private async Task<object> GetAll(IOwinContext context)
 		{
 			var community = context.GetCommunity();
-			var techs = community.Techs;
-
-			var session = context.GetSession();
-			if (session.SteamID != null)
-			{
-				var accountID = session.SteamID.ToSteamID64();
-				var results = techs
-					.OrderByDescending(t => t.CreationTime)
-					.Select(t => new
-					{
-						Creator = t.Owner.Username,
-						CreatorID = t.OwnerID,
-						Title = t.Title,
-						ImageUrl = t.ImageUrl,
-						Featured = t.Featured,
-						CreationTime = t.CreationTime,
-						Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
-						Subscribed = t.Subscribers.Any(acc => acc.SteamID == accountID),
-					});
-				return await results.ToListAsync();
-			}
-			else
-			{
-				var results = techs
-					.OrderByDescending(t => t.CreationTime)
-					.Select(t => new
-					{
-						Creator = t.Owner.Username,
-						CreatorID = t.OwnerID,
-						Title = t.Title,
-						ImageUrl = t.ImageUrl,
-						Featured = t.Featured,
-						CreationTime = t.CreationTime,
-						Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
-						Subscribed = false,
-					});
-				return await results.ToListAsync();
-			}
+			var techs = community.Techs.OrderByDescending(t => t.CreationTime);
+			var transformed = await ApplyResponseTransform(context, techs);
+			return await transformed.ToListAsync();
 		}
 
 		private async Task<object> GetSpecific(IOwinContext context, long id)
 		{
 			var community = context.GetCommunity();
 			var techs = community.Techs.Where(tech => tech.ID == id || tech.OwnerID == id);
-			var results = techs.Select(t => new
-			{
-				Creator = t.Owner.Username,
-				CreatorID = t.OwnerID,
-				Title = t.Title,
-				ImageUrl = t.ImageUrl,
-				Views = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
-				Downloads = 18,
-			});
-			return await results.ToListAsync();
+			var transformed = await ApplyResponseTransform(context, techs);
+			return await transformed.ToListAsync();
 		}
+
+		private async Task<IQueryable> ApplyResponseTransform(IOwinContext context, IQueryable<Tech> query)
+		{
+			var session = context.GetSession();
+			var community = context.GetCommunity();
+			if (session.IsValidLogin())
+			{
+				var accountID = session.SteamID.ToSteamID64();
+				return query.Select(t => new
+				{
+					ID = t.ID,
+					Creator = t.Owner.Username,
+					CreatorID = t.OwnerID,
+					Title = t.Title,
+					ImageUrl = t.ImageUrl,
+					Featured = t.Featured,
+					CreationTime = t.CreationTime,
+					Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
+					Subscribed = t.Subscribers.Any(acc => acc.SteamID == accountID),
+				});
+			}
+			else
+			{
+				return query.Select(t => new
+				{
+					ID = t.ID,
+					Creator = t.Owner.Username,
+					CreatorID = t.OwnerID,
+					Title = t.Title,
+					ImageUrl = t.ImageUrl,
+					Featured = t.Featured,
+					CreationTime = t.CreationTime,
+					Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
+					Subscribed = false,
+				});
+			}
+		}
+
 	}
 }

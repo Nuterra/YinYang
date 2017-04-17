@@ -23,7 +23,8 @@ namespace YinYang.Community
 				}
 				else
 				{
-					context.Response.Cookies.Append("YinYang.SteamID", session.SteamID.ToSteamID64().ToString());
+
+					context.Response.Cookies.Append("YinYang.SteamID", session.SteamID.ToSteamID64().ToString(), new CookieOptions { Expires = DateTime.Now });
 				}
 
 				await Next.Invoke(context);

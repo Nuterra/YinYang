@@ -92,8 +92,8 @@
   <ItemGroup>
     <Compile Include="Api\AccountController.cs" />
     <Compile Include="Api\MultipartForm.cs" />
-    <Compile Include="Api\MultipartFormParser.cs" />
     <Compile Include="Api\TechsController.cs" />
+    <Compile Include="Api\MulripartFormParser.cs" />
     <Compile Include="Authentication\LightOpenID.cs" />
     <Compile Include="Community\Account.cs" />
     <Compile Include="Community\AccountFlags.cs" />

@@ -1,14 +1,8 @@
-<!--
-<div class="container-fluid">
-    <div class="jumbotron">
-        <h1>List of techs</h1>
-        <p>This is a list of the techs available on Nuterra</p>
-    </div>
-</div>
--->
 {{#techs}}
+<div class="col-xs-12 col-sm-6 col-md-4">
     {{> tech}}
+</div>
 {{/techs}}
 {{^techs}}
-    <h1>There are no techs :(</h1>
+<h1>There are no techs :(</h1>
 {{/techs}}
