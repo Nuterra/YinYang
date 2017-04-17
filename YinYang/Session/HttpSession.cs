@@ -39,5 +39,10 @@ namespace YinYang.Session
 
 			Expires += duration;
 		}
+
+		internal bool IsValidLogin()
+		{
+			return IsValid() && (SteamID != null) && (SteamID.IsValid());
+		}
 	}
 }
