@@ -98,21 +98,13 @@
     <Compile Include="Community\CommunityContext.cs" />
     <Compile Include="Community\CommunityExtensions.cs" />
     <Compile Include="Community\CommunityMiddleware.cs" />
-    <Compile Include="Community\TechUpload.cs" />
+    <Compile Include="Community\Tech.cs" />
     <Compile Include="HandlerRoute.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Middleware.cs" />
-    <Compile Include="Migrations\201703272153136_Initial.cs" />
-    <Compile Include="Migrations\201703272153136_Initial.Designer.cs">
-      <DependentUpon>201703272153136_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704121507500_TechImageAndData.cs" />
-    <Compile Include="Migrations\201704121507500_TechImageAndData.Designer.cs">
-      <DependentUpon>201704121507500_TechImageAndData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704131527203_OwnersAndSubscribers.cs" />
-    <Compile Include="Migrations\201704131527203_OwnersAndSubscribers.Designer.cs">
-      <DependentUpon>201704131527203_OwnersAndSubscribers.cs</DependentUpon>
+    <Compile Include="Migrations\201704171245540_init.cs" />
+    <Compile Include="Migrations\201704171245540_init.Designer.cs">
+      <DependentUpon>201704171245540_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="RedirectHandler.cs" />
@@ -150,17 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703272153136_Initial.resx">
-      <DependentUpon>201703272153136_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704121507500_TechImageAndData.resx">
-      <DependentUpon>201704121507500_TechImageAndData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704131527203_OwnersAndSubscribers.resx">
-      <DependentUpon>201704131527203_OwnersAndSubscribers.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\pages\account.mustache">
@@ -219,6 +200,11 @@
     <None Include="assets\launch.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201704171245540_init.resx">
+      <DependentUpon>201704171245540_init.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -26,7 +26,7 @@ namespace YinYang.Session
 			else
 			{
 				HttpSession existingSession;
-				if (_sessions.TryGetValue(sessionGuid, out existingSession))
+				if (_sessions.TryGetValue(sessionGuid, out existingSession) && existingSession.IsValid())
 				{
 					existingSession.MarkUsed();
 					context.SetSession(existingSession);

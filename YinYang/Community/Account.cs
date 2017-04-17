@@ -24,15 +24,15 @@ namespace YinYang.Community
 		public AccountFlags Flags { get; set; }
 
 		[InverseProperty("Subscribers")]
-		public virtual ICollection<TechUpload> SubscribedTechs { get; set; }
+		public virtual ICollection<Tech> SubscribedTechs { get; set; }
 
 		[InverseProperty("Owner")]
-		public virtual ICollection<TechUpload> UploadedTechs { get; set; }
+		public virtual ICollection<Tech> UploadedTechs { get; set; }
 
 		public Account()
 		{
-			SubscribedTechs = new HashSet<TechUpload>();
-			UploadedTechs = new HashSet<TechUpload>();
+			SubscribedTechs = new HashSet<Tech>();
+			UploadedTechs = new HashSet<Tech>();
 		}
 	}
 

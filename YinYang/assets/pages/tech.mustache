@@ -2,16 +2,16 @@
     <div class="tech tech-item">
         <a class="tech-thumbnail" href="/app/tech/{{id}}/{{title}}">
             <img src="{{imageUrl}}" alt="Thumbnail" style="width:100%">
+            {{#featured}}
+            <div class="tech-ribbon tech-ribbon-green">Community Core</div>
+            {{/featured}}
         </a>
         <div class="tech-info">
             <p class="tech-title">{{title}}</p>
             <a class="tech-creator" href="/app/account/{{ownerID}}">{{creator}}</a>
             <p class="tech-stats">
-                <a class="downloads" href="#downloads">
-                    <span class="glyphicon glyphicon-download-alt" /> {{downloads}}
-                </a>
-                <a class="views" href="#views">
-                    <span class="glyphicon glyphicon-eye-open" /> {{views}}
+                <a class="subscriptions {{#subscribed}}subscribed{{/subscribed}}" href="#downloads">
+                    <span class="glyphicon glyphicon-download-alt" /> {{subscriptions}}
                 </a>
             </p>
         </div>

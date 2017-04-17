@@ -9,7 +9,7 @@ namespace YinYang.Community
 		public const string ConnectionStringName = "YinYang." + nameof(CommunityContext);
 
 		public DbSet<Account> Accounts { get; set; }
-		public DbSet<TechUpload> Techs { get; set; }
+		public DbSet<Tech> Techs { get; set; }
 
 		public CommunityContext() : base("name=" + ConnectionStringName)
 		{

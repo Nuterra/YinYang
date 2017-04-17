@@ -21,7 +21,15 @@
 }
 
 .tech-item .tech-thumbnail {
+    position:relative;
+    display: block;
+}
 
+.tech-thumbnail > .tech-ribbon {
+    position:absolute;
+    bottom: 10px;
+    right: 0px;
+    padding: 0px 17px 0px 7px;
 }
 
 .tech-info {
@@ -56,7 +64,7 @@
     color: #6d6d6d;
 }
 
-.tech-stats a:hover, a:active, a:visited, :focus {
+.tech-stats a:hover, .tech-stats a:active, .tech-stats a:visited, .tech-stats a:focus {
     text-decoration: none !important;
 }
 
@@ -64,6 +72,25 @@
     color: #db0000;
 }
 
-.tech-stats a.downloads:hover {
+.tech-stats a.subscriptions:hover {
+    color: #db0000;
     color: #00db00;
+}
+
+.tech-stats a.subscribed {
+    color: #019c01;
+}
+
+.tech-ribbon-green {
+    font-size: 10px;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0px 7px;
+    font-weight: bold;
+    line-height: 20px;
+    display: block;
+    background: #79A70A;
+    background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
 }

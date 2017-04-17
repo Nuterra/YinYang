@@ -7,9 +7,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using YinYang.Community;
+using YinYang.Session;
 
 namespace YinYang.Api
 {
@@ -17,6 +17,7 @@ namespace YinYang.Api
 	{
 		private Dictionary<HttpMethod, Func<IOwinContext, Task<object>>> _routing;
 		private JsonSerializer _serializer = JsonSerializer.Create(new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
 		public TechController()
 		{
 			_routing = new Dictionary<HttpMethod, Func<IOwinContext, Task<object>>>();
@@ -62,9 +63,44 @@ namespace YinYang.Api
 		private async Task<object> GetAll(IOwinContext context)
 		{
 			var community = context.GetCommunity();
-			var techs = await community.Techs.ToListAsync();
+			var techs = community.Techs;
 
-			return techs.Select(TechToJson);
+			var session = context.GetSession();
+			if (session.SteamID != null)
+			{
+				var accountID = session.SteamID.ToSteamID64();
+				var results = techs
+					.OrderByDescending(t => t.CreationTime)
+					.Select(t => new
+					{
+						Creator = t.Owner.Username,
+						CreatorID = t.OwnerID,
+						Title = t.Title,
+						ImageUrl = t.ImageUrl,
+						Featured = t.Featured,
+						CreationTime = t.CreationTime,
+						Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
+						Subscribed = t.Subscribers.Any(acc => acc.SteamID == accountID),
+					});
+				return await results.ToListAsync();
+			}
+			else
+			{
+				var results = techs
+					.OrderByDescending(t => t.CreationTime)
+					.Select(t => new
+					{
+						Creator = t.Owner.Username,
+						CreatorID = t.OwnerID,
+						Title = t.Title,
+						ImageUrl = t.ImageUrl,
+						Featured = t.Featured,
+						CreationTime = t.CreationTime,
+						Subscriptions = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
+						Subscribed = false,
+					});
+				return await results.ToListAsync();
+			}
 		}
 
 		private async Task<object> GetSpecific(IOwinContext context, long id)
@@ -77,15 +113,10 @@ namespace YinYang.Api
 				CreatorID = t.OwnerID,
 				Title = t.Title,
 				ImageUrl = t.ImageUrl,
+				Views = community.Accounts.Count(acc => acc.SubscribedTechs.Contains(t)),
+				Downloads = 18,
 			});
 			return await results.ToListAsync();
-		}
-
-		private object TechToJson(TechUpload tech)
-		{
-			var json = JObject.FromObject(tech, _serializer);
-			json.Add("creator", tech.Owner.Username);
-			return json;
 		}
 	}
 }

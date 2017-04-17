@@ -33,17 +33,17 @@ namespace YinYang.Migrations
 				Flags = AccountFlags.Activated,
 			};
 
-			context.Accounts.AddOrUpdate(acc => acc.SteamID, maritaria, testAccount);
 
-			TechUpload tech1 = new TechUpload
+			Tech tech1 = new Tech
 			{
 				ID = 1,
 				OwnerID = maritaria.SteamID,
 				Title = "MyFirstTech",
 				ImageUrl = "http://i.imgur.com/M6aJxUX.png",
 				TechData = "this is a 1 tech",
+				Featured = true,
 			};
-			TechUpload tech2 = new TechUpload
+			Tech tech2 = new Tech
 			{
 				ID = 2,
 				OwnerID = maritaria.SteamID,
@@ -51,32 +51,32 @@ namespace YinYang.Migrations
 				ImageUrl = "http://i.imgur.com/jGONnH2.png",
 				TechData = "this is a 2 tech",
 			};
-			TechUpload tech3 = new TechUpload
+			Tech tech3 = new Tech
 			{
 				ID = 3,
 				OwnerID = testAccount.SteamID,
 				Title = "I made a thing",
 				ImageUrl = "http://i.imgur.com/xgCE4Uj.png",
 				TechData = "this is a 3 tech",
+				CreationTime = DateTime.Now.Add(TimeSpan.FromMinutes(5)),
 			};
-			TechUpload tech4 = new TechUpload
+			Tech tech4 = new Tech
 			{
 				ID = 4,
 				OwnerID = testAccount.SteamID,
 				Title = "UNBELIEVABLE SUPER MEGA TECH OMGeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
 				ImageUrl = "http://i.imgur.com/qBcJZbH.png",
 				TechData = "this is a 4 techeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				CreationTime = DateTime.Now.Subtract(TimeSpan.FromMinutes(5)),
 			};
+			maritaria.SubscribedTechs.Add(tech1);
+			maritaria.SubscribedTechs.Add(tech2);
 
-			tech1.Subscribers.Add(maritaria);
-			tech2.Subscribers.Add(maritaria);
-			tech3.Subscribers.Add(maritaria);
-
-			tech2.Subscribers.Add(testAccount);
-			tech3.Subscribers.Add(testAccount);
-			tech4.Subscribers.Add(testAccount);
+			testAccount.SubscribedTechs.Add(tech2);
+			testAccount.SubscribedTechs.Add(tech3);
 
 			context.Techs.AddOrUpdate(t => t.ID, tech1, tech2, tech3, tech4);
+			context.Accounts.AddOrUpdate(acc => acc.SteamID, maritaria, testAccount);
 
 			//  You can use the DbSet<T>.AddOrUpdate() helper extension method
 			//  to avoid creating duplicate seed data. E.g.
