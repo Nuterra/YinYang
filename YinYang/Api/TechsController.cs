@@ -22,6 +22,44 @@ namespace YinYang.Api
 		{
 			_routing = new Dictionary<HttpMethod, Func<IOwinContext, Task<object>>>();
 			_routing.Add(HttpMethod.Get, Get);
+			_routing.Add(HttpMethod.Post, Post);
+		}
+
+
+		private async Task<object> Post(IOwinContext context)
+		{
+			string contentType = context.Request.ContentType;
+			if (!contentType.StartsWith("multipart/form-data;"))
+			{
+				return "error: not multipart form content type";
+			}
+			FormValue titleValue;
+			FormValue fileValue;
+			var form = await MultipartFormParser.ParseMultipartForm(contentType, context.Request.Body);
+			if (!form.TryGetValue("title", out titleValue))
+			{
+				return "error: missing title";
+			}
+			if (!form.TryGetValue("file", out fileValue))
+			{
+				return "error: missing file";
+			}
+
+			string title = titleValue.StringValue;
+			FileUpload file = fileValue.FilesValue.Single();
+			string finalPath = Path.Combine("images", file.FileName);
+			Directory.CreateDirectory("images");
+			File.WriteAllBytes(finalPath, file.Contents);
+
+			Tech newTech = context.GetCommunity().Techs.Create();
+			newTech.OwnerID = context.GetSession().SteamID.ToSteamID64();
+			newTech.Title = title;
+			newTech.ImageUrl = "/images/" + finalPath.Replace('\\', '/');
+			context.GetCommunity().Techs.Add(newTech);
+			await context.GetCommunity().SaveChangesAsync();
+
+			return null;
+
 		}
 
 		public async Task HandleRequestAsync(IOwinContext context)

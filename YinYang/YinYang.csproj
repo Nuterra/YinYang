@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\AccountController.cs" />
+    <Compile Include="Api\MultipartForm.cs" />
+    <Compile Include="Api\MultipartFormParser.cs" />
     <Compile Include="Api\TechsController.cs" />
     <Compile Include="Authentication\LightOpenID.cs" />
     <Compile Include="Community\Account.cs" />
@@ -125,6 +127,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="assets\pages\tech-create.mustache">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\pages\tech.mustache">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -188,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\features.txt" />
+    <None Include="assets\pages\tech-create.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\pages\tech.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

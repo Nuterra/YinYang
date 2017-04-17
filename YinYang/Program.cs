@@ -44,10 +44,12 @@ namespace YinYang
 
 			app.Map("/login", ConfigureLogin);
 
+			server.AddRoute(new HttpRoute("/images", HttpMethod.Get), new StaticFileHandler() { RootDirectory = "./images/" });
 			server.AddRoute(new HttpRoute("/", HttpMethod.Get), new StaticFileHandler() { RootDirectory = ConfigurationManager.AppSettings["YinYang.AssetDirectory"] });
 
 			app.Map("/api/accounts", ConfigureAccountApi);
 			app.Map("/api/techs", ConfigureTechApi);
+
 
 			app.Run(context => server.HandleClient(context));
 		}
