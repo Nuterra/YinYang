@@ -6,7 +6,13 @@
             accountTemplate.render({ profile: account }, function (rendered) {
                 $('#main-content').html(rendered);
                 $('#main-content .btn').button();
-                $('#main-content .editable').editable();
+                $('#main-content .editable').editable({
+                    ajaxOptions: {
+                        type: 'put',
+                        dataType: 'json',
+                        url: '/api/accounts/' + account.steamID,
+                    }
+                });
             });
         }
         if (id == null) {

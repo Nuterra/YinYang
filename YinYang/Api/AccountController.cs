@@ -134,13 +134,21 @@ namespace YinYang.Api
 				return false;
 			}
 
-			using (StreamReader reader = new StreamReader(context.Request.Body))
+			var form = await context.Request.ReadFormAsync();
+
+			string fieldname = form["name"];
+			string value = form["value"];
+			switch (fieldname)
 			{
-				var jsonBody = await reader.ReadToEndAsync();
-				JObject obj = JObject.Parse(jsonBody);
-				string newUsername = obj.GetValue("username").ToString();
-				target.Username = newUsername;
-				await community.SaveChangesAsync();
+				case "username":
+					if (string.IsNullOrWhiteSpace(value))
+					{
+						context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+						return "username is null or empty";
+					}
+					target.Username = value;
+					await community.SaveChangesAsync();
+					break;
 			}
 			return true;
 		}
