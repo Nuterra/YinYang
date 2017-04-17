@@ -68,11 +68,7 @@ namespace YinYang.Api
 
 			var client = new ImgurClient(ConfigurationManager.AppSettings["Imgur.ClientID"], ConfigurationManager.AppSettings["Imgur.ClientSecret"]);
 			var endpoint = new ImageEndpoint(client);
-			IImage image;
-			using (var fs = new MemoryStream(file.Contents))
-			{
-				image = await endpoint.UploadImageStreamAsync(fs);
-			}
+			IImage image = await endpoint.UploadImageBinaryAsync(file.Contents);
 
 			Tech newTech = community.Techs.Create();
 			newTech.Owner = user;
