@@ -83,6 +83,22 @@ namespace YinYang.Steam
 				);
 		}
 
+		private static int Rotate(int value, int shift)
+		{
+			return (value << shift) | (value >> (32 - shift));
+		}
+
+		public override int GetHashCode()
+		{
+			//Instance 0-4 (2 bits)
+			//Type 0-10 (4 bits)
+			//Universe 0-5 (3 bits)
+			return (int) Instance ^
+				((int) Type << 2) ^
+				((int) Universe << 6) ^
+				Rotate((int)AccountID, 9);
+		}
+
 		public bool IsValid()
 		{
 			switch (Universe)

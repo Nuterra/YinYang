@@ -38,7 +38,7 @@
                     Nuterra.showPage('techs', techId);
                 }).fail(function (jqXhr, textStatus) {
                     alert("error: " + textStatus);
-                })
+                });
             }
         });
     }

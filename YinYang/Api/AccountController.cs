@@ -180,14 +180,7 @@ namespace YinYang.Api
 			var id = long.Parse(path);
 			SteamID targetID;
 			string targetIDString = path;
-			if (targetIDString != null)
-			{
-				targetID = new SteamID(long.Parse(targetIDString));
-			}
-			else
-			{
-				targetID = session.SteamID;
-			}
+			targetID = new SteamID(long.Parse(targetIDString));
 			Account target = await community.Accounts.GetBySteamIDAsync(targetID);
 			return target;
 		}

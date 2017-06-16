@@ -36,8 +36,10 @@ namespace YinYang.Steam
 
 		private static LightOpenID InitializeOpenID(IOwinContext request)
 		{
-			var openID = new LightOpenID(request.Request);
-			openID.Realm = new Uri(request.Request.Uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped));
+			var openID = new LightOpenID(request.Request)
+			{
+				Realm = new Uri(request.Request.Uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped))
+			};
 			openID.ReturnUrl = new Uri(openID.Realm, "/login/landing");
 			return openID;
 		}

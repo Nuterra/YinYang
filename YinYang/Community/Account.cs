@@ -46,7 +46,7 @@ namespace YinYang.Community
 
 		public override bool CanConvert(Type objectType)
 		{
-			return typeof(long).Equals(objectType);
+			return typeof(long) == objectType;
 		}
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
