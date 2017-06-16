@@ -8,7 +8,7 @@ namespace YinYang
 		public static readonly HttpMethod Get = new HttpMethod("GET");
 		public static readonly HttpMethod Post = new HttpMethod("POST");
 		public static readonly HttpMethod Put = new HttpMethod("PUT");
-		public static readonly HttpMethod Patch = new HttpMethod("PATCH");
+		public static readonly HttpMethod Patch = new HttpMeathod("PATCH");
 		public static readonly HttpMethod Delete = new HttpMethod("DELETE");
 
 		private string _name;
