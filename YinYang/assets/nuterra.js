@@ -214,6 +214,22 @@ window.Nuterra = (function () {
                 return null;
             }
         },
+        createContext() {
+            this.context = {};
+            return this.context;
+        },
+        checkContext(obj) {
+            if (this.context == null) {
+                this.context = obj;
+                return true;
+            } else {
+                return this.context === obj;
+            }
+        },
+        releaseContext(context) {
+            if (checkContext(context))
+                this.context = null;
+        },
     };
     return myNuterra;
 }());
