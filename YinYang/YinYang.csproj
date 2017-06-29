@@ -198,6 +198,8 @@
   <ItemGroup>
     <Content Include="assets\features.txt" />
     <Content Include="Migrations\Migrate_Init.sql" />
+    <Content Include="tests\test1.js" />
+    <Content Include="tests\test2.js" />
     <None Include="assets\pages\tech-create.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

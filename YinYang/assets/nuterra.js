@@ -214,11 +214,12 @@ window.Nuterra = (function () {
                 return null;
             }
         },
-        createContext() {
+        context: null,
+        createContext: function() {
             this.context = {};
             return this.context;
         },
-        checkContext(obj) {
+        checkContext: function(obj) {
             if (this.context == null) {
                 this.context = obj;
                 return true;
@@ -226,8 +227,8 @@ window.Nuterra = (function () {
                 return this.context === obj;
             }
         },
-        releaseContext(context) {
-            if (checkContext(context))
+        releaseContext: function (context) {
+            if (this.checkContext(context))
                 this.context = null;
         },
     };
